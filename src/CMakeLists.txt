@@ -3,9 +3,12 @@ project(gmshparsercpp
     LANGUAGES CXX
 )
 
+FLEX_TARGET(MSH_LEXER msh.lex ${CMAKE_CURRENT_BINARY_DIR}/gmshparsercppMshLexer.cpp)
+
 add_library(${PROJECT_NAME}
     SHARED
         gmshparsercppMshFile.cpp
+        ${FLEX_MSH_LEXER_OUTPUTS}
 )
 target_code_coverage(${PROJECT_NAME})
 
@@ -20,6 +23,8 @@ target_include_directories(
     ${PROJECT_NAME}
     PRIVATE
         ${CMAKE_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_BINARY_DIR}
+        ${FLEX_INCLUDE_DIRS}
 )
 
 target_link_libraries(

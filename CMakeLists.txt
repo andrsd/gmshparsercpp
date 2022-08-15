@@ -6,12 +6,15 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 project(gmshparsercpp)
 
+enable_language(C)
+
 include(FetchContent)
 include(${CMAKE_SOURCE_DIR}/cmake/CodeCoverage.cmake)
 
 option(GMSHPARSERCPP_BUILD_TESTS "Build tests" NO)
 
 find_package(fmt REQUIRED)
+find_package(FLEX REQUIRED)
 
 FetchContent_Declare(
   googletest
