@@ -18,24 +18,18 @@ TEST(MshFileTest, empty)
 
 TEST(MshFileTest, header)
 {
-    std::string file_name =
-        std::string(GMSHPARSERCPP_ASSETS_DIR) + std::string("/header-only.msh");
+    std::string file_name = std::string(GMSHPARSERCPP_ASSETS_DIR) + std::string("/header-only.msh");
     MshFile f(file_name);
-    EXPECT_NO_THROW({
-        f.parse();
-    });
+    EXPECT_NO_THROW({ f.parse(); });
     EXPECT_EQ(f.get_version(), 4.1);
     EXPECT_TRUE(f.is_ascii());
 }
 
 TEST(MshFileTest, quad)
 {
-    std::string file_name =
-        std::string(GMSHPARSERCPP_ASSETS_DIR) + std::string("/quad.msh");
+    std::string file_name = std::string(GMSHPARSERCPP_ASSETS_DIR) + std::string("/quad.msh");
     MshFile f(file_name);
-    EXPECT_NO_THROW({
-        f.parse();
-    });
+    EXPECT_NO_THROW({ f.parse(); });
     EXPECT_EQ(f.get_version(), 4.1);
     EXPECT_TRUE(f.is_ascii());
 }
