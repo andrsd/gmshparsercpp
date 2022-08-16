@@ -17,8 +17,6 @@ jobs:
         include:
           - os: ubuntu-22.04
             compiler: clang
-          - os: macos-11
-            compiler: clang
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout source
@@ -35,7 +33,6 @@ jobs:
         run: |
           brew install automake lcov fmt flex
           echo "/usr/local/opt/flex/bin" >> $GITHUB_PATH
-          echo "FLEX_INCLUDE_DIR=/usr/local/opt/flex/include" >> $GITHUB_ENV
           echo "LLVM_COV_PATH=$(brew --cellar)/llvm/14.0.6_1/bin/llvm-cov" >> $GITHUB_ENV
           echo "LLVM_PROFDATA_PATH=$(brew --cellar)/llvm/14.0.6_1/bin/llvm-profdata" >> $GITHUB_ENV
       - name: Configure
@@ -73,4 +70,4 @@ jobs:
         uses: codacy/codacy-coverage-reporter-action@v1
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          coverage-reports: 'coverage-ubuntu-22.04-clang/coverage.info,coverage-macos-11-clang/coverage.info'
+          coverage-reports: 'coverage-ubuntu-22.04-clang/coverage.info'
