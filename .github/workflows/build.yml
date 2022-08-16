@@ -27,11 +27,11 @@ jobs:
         if: startsWith(matrix.os, 'ubuntu')
         run: |
           sudo apt-get update -qq
-          sudo apt install lcov llvm-12 libfmt-dev
+          sudo apt install lcov llvm-12 libfmt-dev libfl-dev
       - name: Install dependencies (macos)
         if: startsWith(matrix.os, 'macos')
         run: |
-          brew install automake lcov fmt
+          brew install automake lcov fmt flex
       - name: Setup coverage cmake args (linux)
         if: startsWith(matrix.os, 'ubuntu')
         run: |

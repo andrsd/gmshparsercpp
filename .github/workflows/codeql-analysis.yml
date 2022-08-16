@@ -34,7 +34,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update -qq
-        sudo apt install llvm-12 libfmt-dev
+        sudo apt install llvm-12 libfmt-dev libfl-dev
     - name: Configure
       run: |
         cmake -S . -B ${{ github.workspace }}/build \
