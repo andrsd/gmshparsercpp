@@ -1,0 +1,80 @@
+name: build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: ${{ matrix.os }}-${{ matrix.compiler }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            compiler: clang
+          - os: macos-11
+            compiler: clang
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v2
+      - name: Install dependencies (linux)
+        if: startsWith(matrix.os, 'ubuntu')
+        run: |
+          sudo apt-get update -qq
+          sudo apt install lcov llvm-12 libfmt-dev
+      - name: Install dependencies (macos)
+        if: startsWith(matrix.os, 'macos')
+        run: |
+          brew install automake lcov fmt
+      - name: Setup coverage cmake args (linux)
+        if: startsWith(matrix.os, 'ubuntu')
+        run: |
+          echo "LLVM_COV_PATH=/usr/bin/llvm-cov-12" >> $GITHUB_ENV
+          echo "LLVM_PROFDATA_PATH=/usr/bin/llvm-profdata-12" >> $GITHUB_ENV
+      - name: Setup coverage cmake args (macos)
+        if: startsWith(matrix.os, 'macos')
+        run: |
+          echo "LLVM_COV_PATH=$(brew --cellar)/llvm/14.0.6_1/bin/llvm-cov" >> $GITHUB_ENV
+          echo "LLVM_PROFDATA_PATH=$(brew --cellar)/llvm/14.0.6_1/bin/llvm-profdata" >> $GITHUB_ENV
+      - name: Configure
+        run: |
+          cmake -S . -B ${{ github.workspace }}/build \
+            -DGMSHPARSERCPP_BUILD_TESTS=YES \
+            -DGMSHPARSERCPP_CODE_COVERAGE=YES \
+            -DLLVM_COV_PATH=${LLVM_COV_PATH} \
+            -DLLVM_PROFDATA_PATH=${LLVM_PROFDATA_PATH}
+      - name: Build
+        run: make -C ${{ github.workspace }}/build
+      - name: Run tests
+        run: make -C ${{ github.workspace }}/build test ARGS='-V'
+      - name: Generate code coverage
+        if: startsWith(matrix.os, 'ubuntu')
+        run: make -C ${{ github.workspace }}/build coverage
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v2
+        if: startsWith(matrix.os, 'ubuntu')
+        with:
+          name: coverage-${{ matrix.os }}-${{ matrix.compiler }}
+          path: ${{ github.workspace }}/build/coverage.info
+
+  upload-to-codecov:
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v2
+      - name: Run codacy-coverage-reporter
+        uses: codacy/codacy-coverage-reporter-action@v1
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-reports: 'coverage-ubuntu-22.04-clang/coverage.info,coverage-macos-11-clang/coverage.info'
