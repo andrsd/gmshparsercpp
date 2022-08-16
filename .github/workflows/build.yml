@@ -23,23 +23,18 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v2
-      - name: Install dependencies (linux)
+      - name: Set up env (linux)
         if: startsWith(matrix.os, 'ubuntu')
         run: |
           sudo apt-get update -qq
           sudo apt install lcov llvm-12 libfmt-dev libfl-dev
-      - name: Install dependencies (macos)
+          echo "LLVM_COV_PATH=/usr/bin/llvm-cov-12" >> $GITHUB_ENV
+          echo "LLVM_PROFDATA_PATH=/usr/bin/llvm-profdata-12" >> $GITHUB_ENV
+      - name: Set up env (macos)
         if: startsWith(matrix.os, 'macos')
         run: |
           brew install automake lcov fmt flex
-      - name: Setup coverage cmake args (linux)
-        if: startsWith(matrix.os, 'ubuntu')
-        run: |
-          echo "LLVM_COV_PATH=/usr/bin/llvm-cov-12" >> $GITHUB_ENV
-          echo "LLVM_PROFDATA_PATH=/usr/bin/llvm-profdata-12" >> $GITHUB_ENV
-      - name: Setup coverage cmake args (macos)
-        if: startsWith(matrix.os, 'macos')
-        run: |
+          echo "/usr/local/opt/flex/bin" >> $GITHUB_PATH
           echo "LLVM_COV_PATH=$(brew --cellar)/llvm/14.0.6_1/bin/llvm-cov" >> $GITHUB_ENV
           echo "LLVM_PROFDATA_PATH=$(brew --cellar)/llvm/14.0.6_1/bin/llvm-profdata" >> $GITHUB_ENV
       - name: Configure
