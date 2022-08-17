@@ -90,6 +90,28 @@ public:
         Node() : dimension(-1), entity_tag(-1), parametric(false) {}
     };
 
+    struct Element {
+        /// Element tag
+        int tag;
+        /// Node tags
+        std::vector<int> node_tags;
+
+        Element() : tag(-1) {}
+    };
+
+    struct ElementBlock {
+        /// Block dimension
+        int dimension;
+        /// Block tag
+        int tag;
+        /// Element type
+        int element_type;
+        /// Elements
+        std::vector<Element> elements;
+
+        ElementBlock() : dimension(-1), tag(-1), element_type(-1) {}
+    };
+
     /// Construct MSH file
     ///
     /// @param file_name The MSH file name
@@ -116,6 +138,11 @@ public:
     ///
     /// @return List of nodes
     const std::vector<Node> & get_nodes() const;
+
+    /// Get element blocks
+    ///
+    /// @return List of element blocks
+    const std::vector<ElementBlock> & get_element_blocks() const;
 
     /// Parse the file
     void parse();
@@ -150,6 +177,8 @@ protected:
     std::vector<PhysicalName> physical_names;
     /// Nodes
     std::vector<Node> nodes;
+    /// Element blocks
+    std::vector<ElementBlock> element_blocks;
     /// Parsed tokens (valid only during process_XYZ)
     std::deque<Token> tokens;
 };

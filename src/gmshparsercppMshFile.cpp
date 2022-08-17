@@ -52,6 +52,12 @@ MshFile::get_nodes() const
     return this->nodes;
 }
 
+const std::vector<MshFile::ElementBlock> &
+MshFile::get_element_blocks() const
+{
+    return this->element_blocks;
+}
+
 void
 MshFile::parse()
 {
@@ -98,7 +104,7 @@ MshFile::process_optional_sections()
             else if (next.str.compare("$Nodes") == 0)
                 process_nodes_section();
             else if (next.str.compare("$Elements") == 0)
-                skip_section();
+                process_elements_section();
             else if (next.str.compare("$Periodic") == 0)
                 skip_section();
             else if (next.str.compare("$GhostElements") == 0)
@@ -287,17 +293,22 @@ MshFile::process_elements_section()
     auto max_node_tag = read().as_int();
 
     for (int i = 0; i < num_entity_blocks; i++) {
-        auto dimension = read().as_int();
-        auto tag = read().as_int();
-        auto element_type = read().as_int();
+        ElementBlock blk;
+        blk.dimension = read().as_int();
+        blk.tag = read().as_int();
+        blk.element_type = read().as_int();
+        auto num_nodes_per_element = get_nodes_per_element(blk.element_type);
         auto num_elements_in_block = read().as_int();
         for (int j = 0; j < num_elements_in_block; j++) {
-            auto element_tag = read().as_int();
-            auto num_nodes_per_element = get_nodes_per_element(element_type);
+            Element el;
+            el.tag = read().as_int();
             for (int k = 0; k < num_nodes_per_element; k++) {
-                auto node_tag = read().as_int();
+                auto tag = read().as_int();
+                el.node_tags.push_back(tag);
             }
+            blk.elements.push_back(el);
         }
+        this->element_blocks.push_back(blk);
     }
 
     read_end_section_marker("$EndElements");

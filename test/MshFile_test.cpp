@@ -50,4 +50,7 @@ TEST(MshFileTest, quad)
 
     auto nodes = f.get_nodes();
     EXPECT_EQ(nodes.size(), 9);
+
+    auto el_blks = f.get_element_blocks();
+    EXPECT_EQ(el_blks.size(), 9);
 }
