@@ -35,10 +35,10 @@ TEST(MshFileTest, quad)
     EXPECT_TRUE(f.is_ascii());
 
     std::vector<MshFile::PhysicalName> test_phys_names = {
-        MshFile::PhysicalName({ 1, 5, "bottom" }),
-        MshFile::PhysicalName({ 1, 6, "left" }),
-        MshFile::PhysicalName({ 1, 7, "top" }),
-        MshFile::PhysicalName({ 1, 8, "right" })
+        MshFile::PhysicalName(1, 5, "bottom"),
+        MshFile::PhysicalName(1, 6, "left"),
+        MshFile::PhysicalName(1, 7, "top"),
+        MshFile::PhysicalName(1, 8, "right")
     };
     auto phys_names = f.get_physical_names();
     EXPECT_EQ(phys_names.size(), 4);

@@ -57,6 +57,14 @@ public:
         int tag;
         /// Entity name
         std::string name;
+
+        PhysicalName() : dimension(-1), tag(-1) {}
+        PhysicalName(int dim, int tag, const std::string & name) :
+            dimension(dim),
+            tag(tag),
+            name(name)
+        {
+        }
     };
 
     /// Construct MSH file
