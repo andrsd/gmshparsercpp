@@ -66,3 +66,6 @@ $Elements
 11 3 5 2
 12 4 5 3
 $EndElements
+$Comment
+test comment
+$EndComment
