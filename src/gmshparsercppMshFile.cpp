@@ -40,6 +40,12 @@ MshFile::is_ascii() const
     return !this->binary;
 }
 
+const std::vector<MshFile::PhysicalName> &
+MshFile::get_physical_names() const
+{
+    return this->physical_names;
+}
+
 void
 MshFile::parse()
 {

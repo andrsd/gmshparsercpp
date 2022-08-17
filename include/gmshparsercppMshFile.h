@@ -76,6 +76,11 @@ public:
     /// @return True if the file format is in ASCII, False if it is binary
     bool is_ascii() const;
 
+    /// Get physical names
+    ///
+    /// @return List of physical names
+    const std::vector<PhysicalName> & get_physical_names() const;
+
     /// Parse the file
     void parse();
 
