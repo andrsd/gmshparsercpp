@@ -27,7 +27,7 @@ protected:
             if (this->type == Number)
                 return std::stod(this->str);
             else
-                throw std::domain_error("Token is not an integer");
+                throw std::domain_error("Token is not a number");
         }
 
         double
@@ -36,14 +36,14 @@ protected:
             if (this->type == Number)
                 return std::stod(this->str);
             else
-                throw std::domain_error("Token is not a float");
+                throw std::domain_error("Token is not a number");
         }
 
-        const std::string &
+        std::string
         as_string()
         {
             if (this->type == String)
-                return this->str;
+                return this->str.substr(1, this->str.length() - 2);
             else
                 throw std::domain_error("Token is not a string");
         }
