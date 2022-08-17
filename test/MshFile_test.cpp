@@ -47,4 +47,7 @@ TEST(MshFileTest, quad)
         EXPECT_EQ(phys_names[i].tag, test_phys_names[i].tag);
         EXPECT_STREQ(phys_names[i].name.c_str(), test_phys_names[i].name.c_str());
     }
+
+    auto nodes = f.get_nodes();
+    EXPECT_EQ(nodes.size(), 9);
 }

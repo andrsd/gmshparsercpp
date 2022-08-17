@@ -46,6 +46,12 @@ MshFile::get_physical_names() const
     return this->physical_names;
 }
 
+const std::vector<MshFile::Node> &
+MshFile::get_nodes() const
+{
+    return this->nodes;
+}
+
 void
 MshFile::parse()
 {
@@ -90,7 +96,7 @@ MshFile::process_optional_sections()
             else if (next.str.compare("$PartitionedEntities") == 0)
                 skip_section();
             else if (next.str.compare("$Nodes") == 0)
-                skip_section();
+                process_nodes_section();
             else if (next.str.compare("$Elements") == 0)
                 skip_section();
             else if (next.str.compare("$Periodic") == 0)
@@ -241,22 +247,30 @@ MshFile::process_nodes_section()
     auto max_node_tag = read().as_int();
 
     for (int i = 0; i < num_entity_blocks; i++) {
-        auto dimension = read().as_int();
-        auto tag = read().as_int();
-        bool parametric = read().as_int() == 1;
-        auto node_tags = process_array_of_ints();
-        auto x = read().as_float();
-        auto y = read().as_float();
-        auto z = read().as_float();
-        if (parametric) {
-            double u, v, w;
-            if (dimension >= 1)
-                u = read().as_float();
-            if (dimension >= 2)
-                v = read().as_float();
-            if (dimension == 3)
-                w = read().as_float();
+        Node node;
+        node.dimension = read().as_int();
+        node.entity_tag = read().as_int();
+        node.parametric = read().as_int() == 1;
+        // NOTE: it is not 100% clear from the doco how to read this section
+        node.tags = process_array_of_ints();
+        for (std::size_t i = 0; i < node.tags.size(); i++) {
+            Point pt;
+            pt.x = read().as_float();
+            pt.y = read().as_float();
+            pt.z = read().as_float();
+            node.coordinates.push_back(pt);
+            if (node.parametric) {
+                Point par_pr;
+                if (node.dimension >= 1)
+                    par_pr.x = read().as_float();
+                if (node.dimension >= 2)
+                    par_pr.y = read().as_float();
+                if (node.dimension == 3)
+                    par_pr.z = read().as_float();
+                node.par_coords.push_back(par_pr);
+            }
         }
+        this->nodes.push_back(node);
     }
 
     read_end_section_marker("$EndNodes");

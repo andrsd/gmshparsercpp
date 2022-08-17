@@ -67,6 +67,29 @@ public:
         }
     };
 
+    struct Point {
+        double x, y, z;
+
+        Point() : x(0.), y(0.), z(0.) {}
+    };
+
+    struct Node {
+        /// Physical entity dimension
+        int dimension;
+        /// Entity tag
+        int entity_tag;
+        /// Is parametric
+        bool parametric;
+        /// Node tags
+        std::vector<int> tags;
+        /// Coordinates
+        std::vector<Point> coordinates;
+        /// Parametric coordinates
+        std::vector<Point> par_coords;
+
+        Node() : dimension(-1), entity_tag(-1), parametric(false) {}
+    };
+
     /// Construct MSH file
     ///
     /// @param file_name The MSH file name
@@ -88,6 +111,11 @@ public:
     ///
     /// @return List of physical names
     const std::vector<PhysicalName> & get_physical_names() const;
+
+    /// Get nodes
+    ///
+    /// @return List of nodes
+    const std::vector<Node> & get_nodes() const;
 
     /// Parse the file
     void parse();
@@ -120,6 +148,8 @@ protected:
     bool binary;
     /// Physical names
     std::vector<PhysicalName> physical_names;
+    /// Nodes
+    std::vector<Node> nodes;
     /// Parsed tokens (valid only during process_XYZ)
     std::deque<Token> tokens;
 };
