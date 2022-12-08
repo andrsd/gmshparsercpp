@@ -4,12 +4,15 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
-project(gmshparsercpp)
+project(gmshparsercpp
+    VERSION 1.0
+    LANGUAGES CXX
+)
 
 enable_language(C)
 
 include(FetchContent)
-include(${CMAKE_SOURCE_DIR}/cmake/CodeCoverage.cmake)
+include(${PROJECT_SOURCE_DIR}/cmake/CodeCoverage.cmake)
 
 option(GMSHPARSERCPP_BUILD_TESTS "Build tests" NO)
 

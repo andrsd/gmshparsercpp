@@ -1,3 +1,4 @@
+if(CMAKE_PROJECT_NAME STREQUAL "gmshparsercpp")
 
 option(GMSHPARSERCPP_CODE_COVERAGE "Builds targets with code coverage instrumentation" OFF)
 
@@ -173,5 +174,7 @@ else()
 
     function(target_code_coverage TARGET_NAME)
     endfunction()
+
+endif()
 
 endif()
