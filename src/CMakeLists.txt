@@ -16,8 +16,10 @@ set_target_properties(${PROJECT_NAME}
 )
 
 target_include_directories(${PROJECT_NAME}
+    PUBLIC
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include/gmshparsercpp>
     PRIVATE
-        ${PROJECT_SOURCE_DIR}/include
         ${CMAKE_CURRENT_BINARY_DIR}
         ${FLEX_INCLUDE_DIRS}
 )
@@ -38,8 +40,8 @@ install(
 )
 
 install(
-    DIRECTORY ${PROJECT_SOURCE_DIR}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    DIRECTORY ${PROJECT_SOURCE_DIR}/include/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
     FILES_MATCHING PATTERN "*.h"
 )
 
