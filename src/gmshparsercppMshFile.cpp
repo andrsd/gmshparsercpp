@@ -1,7 +1,6 @@
 #include "gmshparsercppMshFile.h"
 #include "gmshparsercppMshLexer.h"
 #include "fmt/printf.h"
-#include <iostream>
 #include <system_error>
 
 int
@@ -88,7 +87,7 @@ MshFile::parse()
     mshFlexLexer lexer(&this->file);
     int res;
     while ((res = lexer.yylex()) != 0) {
-        Token::EType type = static_cast<Token::EType>(res);
+        auto type = static_cast<Token::EType>(res);
         Token token = { type, std::string(lexer.YYText(), lexer.YYLeng()), lexer.lineno() };
         this->tokens.push_back(token);
     }
@@ -102,7 +101,7 @@ MshFile::process_tokens()
 {
     const auto & next = peek();
     if (next.type == Token::Section) {
-        if (next.str.compare("$MeshFormat") == 0) {
+        if (next.str == "$MeshFormat") {
             process_mesh_format_section();
             process_optional_sections();
         }
@@ -119,29 +118,29 @@ MshFile::process_optional_sections()
     Token next = peek();
     while (next.type != Token::EndOfFile) {
         if (next.type == Token::Section) {
-            if (next.str.compare("$PhysicalNames") == 0)
+            if (next.str == "$PhysicalNames")
                 process_physical_names_section();
-            else if (next.str.compare("$Entities") == 0)
+            else if (next.str == "$Entities")
                 process_entities_section();
-            else if (next.str.compare("$PartitionedEntities") == 0)
+            else if (next.str == "$PartitionedEntities")
                 skip_section();
-            else if (next.str.compare("$Nodes") == 0)
+            else if (next.str == "$Nodes")
                 process_nodes_section();
-            else if (next.str.compare("$Elements") == 0)
+            else if (next.str == "$Elements")
                 process_elements_section();
-            else if (next.str.compare("$Periodic") == 0)
+            else if (next.str == "$Periodic")
                 skip_section();
-            else if (next.str.compare("$GhostElements") == 0)
+            else if (next.str == "$GhostElements")
                 skip_section();
-            else if (next.str.compare("$Parametrizations") == 0)
+            else if (next.str == "$Parametrizations")
                 skip_section();
-            else if (next.str.compare("$NodeData") == 0)
+            else if (next.str == "$NodeData")
                 skip_section();
-            else if (next.str.compare("$ElementData") == 0)
+            else if (next.str == "$ElementData")
                 skip_section();
-            else if (next.str.compare("$ElementNodeData") == 0)
+            else if (next.str == "$ElementNodeData")
                 skip_section();
-            else if (next.str.compare("$InterpolationScheme") == 0)
+            else if (next.str == "$InterpolationScheme")
                 skip_section();
             else
                 skip_section();
@@ -161,7 +160,7 @@ MshFile::peek()
 MshFile::Token
 MshFile::read()
 {
-    if (this->tokens.size() > 0) {
+    if (!this->tokens.empty()) {
         auto token = this->tokens.front();
         this->tokens.pop_front();
         return token;
@@ -174,7 +173,7 @@ void
 MshFile::read_end_section_marker(const std::string & section_name)
 {
     auto sct_end = read();
-    if (sct_end.type != Token::Section || sct_end.str.compare(section_name) != 0)
+    if (sct_end.type != Token::Section || sct_end.str != section_name)
         throw std::runtime_error(fmt::sprintf("%s tag not found.", section_name));
 }
 
@@ -183,10 +182,8 @@ MshFile::process_mesh_format_section()
 {
     auto sct_start = read();
 
-    auto version = read().as_float();
-    this->version = version;
-    auto file_type = read().as_int();
-    this->binary = file_type == 1;
+    this->version = read().as_float();
+    this->binary = read().as_int() == 1;
     auto data_size = read();
 
     read_end_section_marker("$EndMeshFormat");
