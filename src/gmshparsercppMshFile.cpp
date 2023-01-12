@@ -46,6 +46,30 @@ MshFile::get_physical_names() const
     return this->physical_names;
 }
 
+const std::vector<MshFile::PointEntity> &
+MshFile::get_point_entities() const
+{
+    return this->point_entities;
+}
+
+const std::vector<MshFile::MultiDEntity> &
+MshFile::get_curve_entities() const
+{
+    return this->curve_entities;
+}
+
+const std::vector<MshFile::MultiDEntity> &
+MshFile::get_surface_entities() const
+{
+    return this->surface_entities;
+}
+
+const std::vector<MshFile::MultiDEntity> &
+MshFile::get_volume_entities() const
+{
+    return this->volume_entities;
+}
+
 const std::vector<MshFile::Node> &
 MshFile::get_nodes() const
 {
@@ -196,47 +220,55 @@ MshFile::process_entities_section()
     auto num_volumes = read().as_int();
 
     for (int i = 0; i < num_points; i++) {
-        auto tag = read().as_int();
-        auto x = read().as_float();
-        auto y = read().as_float();
-        auto z = read().as_float();
-        auto phys_tags = process_array_of_ints();
+        PointEntity pe;
+        pe.tag = read().as_int();
+        pe.x = read().as_float();
+        pe.y = read().as_float();
+        pe.z = read().as_float();
+        pe.physical_tags = process_array_of_ints();
+        this->point_entities.push_back(pe);
     }
 
     for (int i = 0; i < num_curves; i++) {
-        auto tag = read().as_int();
-        auto min_x = read().as_float();
-        auto min_y = read().as_float();
-        auto min_z = read().as_float();
-        auto max_x = read().as_float();
-        auto max_y = read().as_float();
-        auto max_z = read().as_float();
-        auto phys_tags = process_array_of_ints();
-        auto bounding_points = process_array_of_ints();
+        MultiDEntity ent;
+        ent.tag = read().as_int();
+        ent.min_x = read().as_float();
+        ent.min_y = read().as_float();
+        ent.min_z = read().as_float();
+        ent.max_x = read().as_float();
+        ent.max_y = read().as_float();
+        ent.max_z = read().as_float();
+        ent.physical_tags = process_array_of_ints();
+        ent.bounding_tags = process_array_of_ints();
+        this->curve_entities.push_back(ent);
     }
 
     for (int i = 0; i < num_surfaces; i++) {
-        auto tag = read().as_int();
-        auto min_x = read().as_float();
-        auto min_y = read().as_float();
-        auto min_z = read().as_float();
-        auto max_x = read().as_float();
-        auto max_y = read().as_float();
-        auto max_z = read().as_float();
-        auto phys_tags = process_array_of_ints();
-        auto bounding_curves = process_array_of_ints();
+        MultiDEntity ent;
+        ent.tag = read().as_int();
+        ent.min_x = read().as_float();
+        ent.min_y = read().as_float();
+        ent.min_z = read().as_float();
+        ent.max_x = read().as_float();
+        ent.max_y = read().as_float();
+        ent.max_z = read().as_float();
+        ent.physical_tags = process_array_of_ints();
+        ent.bounding_tags = process_array_of_ints();
+        this->surface_entities.push_back(ent);
     }
 
     for (int i = 0; i < num_volumes; i++) {
-        auto tag = read().as_int();
-        auto min_x = read().as_float();
-        auto min_y = read().as_float();
-        auto min_z = read().as_float();
-        auto max_x = read().as_float();
-        auto max_y = read().as_float();
-        auto max_z = read().as_float();
-        auto phys_tags = process_array_of_ints();
-        auto bounding_surfaces = process_array_of_ints();
+        MultiDEntity ent;
+        ent.tag = read().as_int();
+        ent.min_x = read().as_float();
+        ent.min_y = read().as_float();
+        ent.min_z = read().as_float();
+        ent.max_x = read().as_float();
+        ent.max_y = read().as_float();
+        ent.max_z = read().as_float();
+        ent.physical_tags = process_array_of_ints();
+        ent.bounding_tags = process_array_of_ints();
+        this->volume_entities.push_back(ent);
     }
 
     read_end_section_marker("$EndEntities");
