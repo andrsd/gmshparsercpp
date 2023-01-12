@@ -67,6 +67,60 @@ public:
         }
     };
 
+    struct PointEntity {
+        /// Entity tag
+        int tag;
+        /// physical location
+        double x, y, z;
+        /// physical tags
+        std::vector<int> physical_tags;
+
+        PointEntity() : tag(-1), x(0.), y(0.), z(0.) {}
+        PointEntity(int tag, double x, double y, double z, const std::vector<int> & phys_tags) :
+            tag(tag),
+            x(x),
+            y(y),
+            z(z),
+            physical_tags(phys_tags)
+        {
+        }
+    };
+
+    struct MultiDEntity {
+        /// Entity tag
+        int tag;
+        double min_x, min_y, min_z;
+        double max_x, max_y, max_z;
+        /// Physical tags
+        std::vector<int> physical_tags;
+        /// bounding tags
+        std::vector<int> bounding_tags;
+
+        MultiDEntity() : tag(-1), min_x(0.), min_y(0.), min_z(0.), max_x(0.), max_y(0.), max_z(0.)
+        {
+        }
+        MultiDEntity(int tag,
+                     double min_x,
+                     double min_y,
+                     double min_z,
+                     double max_x,
+                     double max_y,
+                     double max_z,
+                     const std::vector<int> & phys_tags,
+                     const std::vector<int> & bnd_tags) :
+            tag(tag),
+            min_x(min_x),
+            min_y(min_y),
+            min_z(min_z),
+            max_x(max_x),
+            max_y(max_y),
+            max_z(max_z),
+            physical_tags(phys_tags),
+            bounding_tags(bnd_tags)
+        {
+        }
+    };
+
     struct Point {
         double x, y, z;
 
@@ -134,6 +188,26 @@ public:
     /// @return List of physical names
     const std::vector<PhysicalName> & get_physical_names() const;
 
+    /// Get point entities
+    ///
+    /// @return List of point entities
+    const std::vector<PointEntity> & get_point_entities() const;
+
+    /// Get curve entities
+    ///
+    /// @return List of curve entities
+    const std::vector<MultiDEntity> & get_curve_entities() const;
+
+    /// Get surface entities
+    ///
+    /// @return List of surface entities
+    const std::vector<MultiDEntity> & get_surface_entities() const;
+
+    /// Get volume entities
+    ///
+    /// @return List of volume entities
+    const std::vector<MultiDEntity> & get_volume_entities() const;
+
     /// Get nodes
     ///
     /// @return List of nodes
@@ -175,6 +249,14 @@ protected:
     bool binary;
     /// Physical names
     std::vector<PhysicalName> physical_names;
+    /// Point entities
+    std::vector<PointEntity> point_entities;
+    /// Curve entities
+    std::vector<MultiDEntity> curve_entities;
+    /// Surface entities
+    std::vector<MultiDEntity> surface_entities;
+    /// Volume entities
+    std::vector<MultiDEntity> volume_entities;
     /// Nodes
     std::vector<Node> nodes;
     /// Element blocks
