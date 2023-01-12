@@ -22,16 +22,16 @@ protected:
         int line_no;
 
         int
-        as_int()
+        as_int() const
         {
             if (this->type == Number)
-                return std::stod(this->str);
+                return std::stoi(this->str);
             else
                 throw std::domain_error("Token is not a number");
         }
 
         double
-        as_float()
+        as_float() const
         {
             if (this->type == Number)
                 return std::stod(this->str);
@@ -40,7 +40,7 @@ protected:
         }
 
         std::string
-        as_string()
+        as_string() const
         {
             if (this->type == String)
                 return this->str.substr(1, this->str.length() - 2);
