@@ -60,7 +60,7 @@ install(
 
 install(
     FILES
-        "${CMAKE_SOURCE_DIR}/cmake/gmshparsercppConfig.cmake"
+        "${PROJECT_SOURCE_DIR}/cmake/gmshparsercppConfig.cmake"
         "${CMAKE_CURRENT_BINARY_DIR}/gmshparsercppConfigVersion.cmake"
     DESTINATION
         lib/cmake/gmshparsercpp
