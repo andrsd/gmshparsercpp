@@ -1,7 +1,7 @@
 FLEX_TARGET(MSH_LEXER msh.lex ${CMAKE_CURRENT_BINARY_DIR}/gmshparsercppMshLexer.cpp)
 
 add_library(${PROJECT_NAME}
-    SHARED
+    ${GMSHPARSERCPP_LIBRARY_TYPE}
         gmshparsercppMshFile.cpp
         ${FLEX_MSH_LEXER_OUTPUTS}
 )
@@ -13,6 +13,7 @@ set_target_properties(${PROJECT_NAME}
     PROPERTIES
         VERSION ${PROJECT_VERSION}
         SOVERSION ${PROJECT_VERSION_MAJOR}
+        POSITION_INDEPENDENT_CODE ON
 )
 
 target_include_directories(${PROJECT_NAME}
