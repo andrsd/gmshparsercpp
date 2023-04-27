@@ -14,6 +14,12 @@ enable_language(C)
 include(FetchContent)
 include(${PROJECT_SOURCE_DIR}/cmake/CodeCoverage.cmake)
 
+set(LibraryTypeValues "SHARED;STATIC")
+if(NOT GMSHPARSERCPP_LIBRARY_TYPE)
+    set(GMSHPARSERCPP_LIBRARY_TYPE "SHARED" CACHE STRING "Build as a shared or static library." FORCE)
+endif()
+set_property(CACHE GMSHPARSERCPP_LIBRARY_TYPE PROPERTY STRINGS ${LibraryTypeValues})
+
 option(GMSHPARSERCPP_BUILD_TESTS "Build tests" NO)
 
 find_package(fmt REQUIRED)
