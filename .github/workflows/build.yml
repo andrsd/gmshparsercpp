@@ -10,50 +10,64 @@ on:
 
 jobs:
   build:
-    name: ${{ matrix.os }}-${{ matrix.compiler }}
+    name: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash -el {0}
     strategy:
       fail-fast: false
       matrix:
         include:
           - os: ubuntu-22.04
-            compiler: clang
+          - os: macos-12
     runs-on: ${{ matrix.os }}
     steps:
+      - name: Set up miniconda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          python-version: 3.9
+          auto-update-conda: false
+          channels: andrsd,conda-forge,defaults
+          channel-priority: strict
+          miniforge-version: latest
+          miniforge-variant: Mambaforge
+          use-mamba: true
+
       - name: Checkout source
         uses: actions/checkout@v3
-      - name: Set up env (linux)
-        if: startsWith(matrix.os, 'ubuntu')
+
+      - name: Install dependencies
         run: |
-          sudo apt-get update -qq
-          sudo apt install lcov llvm-12 libfmt-dev libfl-dev
-          echo "LLVM_COV_PATH=/usr/bin/llvm-cov-12" >> $GITHUB_ENV
-          echo "LLVM_PROFDATA_PATH=/usr/bin/llvm-profdata-12" >> $GITHUB_ENV
-      - name: Set up env (macos)
-        if: startsWith(matrix.os, 'macos')
-        run: |
-          brew install automake lcov fmt flex
-          echo "/usr/local/opt/flex/bin" >> $GITHUB_PATH
-          echo "LLVM_COV_PATH=$(brew --cellar)/llvm/14.0.6_1/bin/llvm-cov" >> $GITHUB_ENV
-          echo "LLVM_PROFDATA_PATH=$(brew --cellar)/llvm/14.0.6_1/bin/llvm-profdata" >> $GITHUB_ENV
+          mamba install \
+            cmake \
+            make \
+            automake \
+            flex \
+            cxx-compiler \
+            fmt==9.1.0 \
+            lcov
+
       - name: Configure
         run: |
           cmake -S . -B ${{ github.workspace }}/build \
             -DGMSHPARSERCPP_BUILD_TESTS=YES \
-            -DGMSHPARSERCPP_CODE_COVERAGE=YES \
-            -DLLVM_COV_PATH=${LLVM_COV_PATH} \
-            -DLLVM_PROFDATA_PATH=${LLVM_PROFDATA_PATH}
+            -DGMSHPARSERCPP_CODE_COVERAGE=YES
+
       - name: Build
         run: make -C ${{ github.workspace }}/build
+
       - name: Run tests
         run: make -C ${{ github.workspace }}/build test ARGS='-V'
+
       - name: Generate code coverage
         if: startsWith(matrix.os, 'ubuntu')
         run: make -C ${{ github.workspace }}/build coverage
+
       - name: Upload coverage artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: startsWith(matrix.os, 'ubuntu')
         with:
-          name: coverage-${{ matrix.os }}-${{ matrix.compiler }}
+          name: coverage-${{ matrix.os }}
           path: ${{ github.workspace }}/build/coverage.info
 
   upload-to-codecov:
@@ -62,12 +76,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
       - name: Download artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
+
       - name: Upload to Codecov
         uses: codecov/codecov-action@v2
+
       - name: Run codacy-coverage-reporter
         uses: codacy/codacy-coverage-reporter-action@v1
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          coverage-reports: 'coverage-ubuntu-22.04-clang/coverage.info'
+          coverage-reports: 'coverage-ubuntu-22.04/coverage.info'

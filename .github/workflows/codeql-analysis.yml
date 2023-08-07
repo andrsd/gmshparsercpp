@@ -35,10 +35,12 @@ jobs:
       run: |
         sudo apt-get update -qq
         sudo apt install llvm-12 libfmt-dev libfl-dev
+
     - name: Configure
       run: |
         cmake -S . -B ${{ github.workspace }}/build \
           -DGMSHPARSERCPP_BUILD_TESTS=YES
+
     - name: Build
       run: make -C ${{ github.workspace }}/build
 
