@@ -27,23 +27,20 @@ jobs:
         with:
           python-version: 3.9
           auto-update-conda: false
-          channels: andrsd,conda-forge,defaults
+          channels: andrsd,main
           channel-priority: strict
-          miniforge-version: latest
-          miniforge-variant: Mambaforge
-          use-mamba: true
 
       - name: Checkout source
         uses: actions/checkout@v3
 
       - name: Install dependencies
         run: |
-          mamba install \
+          conda install \
             cmake \
             make \
             automake \
             flex \
-            cxx-compiler \
+            clangxx \
             fmt==9.1.0 \
             lcov
 
