@@ -15,7 +15,7 @@ enum mshFlexLexerToken : int {
 %option c++
 %option prefix="msh"
 %option batch
-%option header-file="gmshparsercppMshLexer.h"
+%option header-file="MshLexer.h"
 %option yylineno
 
 ws        [ \t]+

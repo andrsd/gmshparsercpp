@@ -1,6 +1,6 @@
 #include <gmock/gmock.h>
 #include "TestConfig.h"
-#include "gmshparsercpp.h"
+#include "gmshparsercpp/MshFile.h"
 
 using namespace gmshparsercpp;
 using namespace testing;

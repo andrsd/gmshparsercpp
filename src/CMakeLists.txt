@@ -1,12 +1,11 @@
-FLEX_TARGET(MSH_LEXER msh.lex ${CMAKE_CURRENT_BINARY_DIR}/gmshparsercppMshLexer.cpp)
-
 add_library(${PROJECT_NAME}
     ${GMSHPARSERCPP_LIBRARY_TYPE}
-        gmshparsercppMshFile.cpp
-        ${FLEX_MSH_LEXER_OUTPUTS}
+        MshFile.cpp
+        ${CMAKE_CURRENT_BINARY_DIR}/MshLexer.cpp
 )
+
 if(CMAKE_PROJECT_NAME STREQUAL "gmshparsercpp")
-target_code_coverage(${PROJECT_NAME})
+    target_code_coverage(${PROJECT_NAME})
 endif()
 
 set_target_properties(${PROJECT_NAME}
@@ -19,15 +18,20 @@ set_target_properties(${PROJECT_NAME}
 target_include_directories(${PROJECT_NAME}
     PUBLIC
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:include/gmshparsercpp>
+        $<INSTALL_INTERFACE:include>
     PRIVATE
         ${CMAKE_CURRENT_BINARY_DIR}
-        ${FLEX_INCLUDE_DIRS}
 )
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
         fmt::fmt
+)
+
+add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/MshLexer.cpp
+    COMMAND ${FLEX_EXECUTABLE} -o ${CMAKE_CURRENT_BINARY_DIR}/MshLexer.cpp ${PROJECT_SOURCE_DIR}/src/msh.lex
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 install(
