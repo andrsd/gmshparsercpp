@@ -4,6 +4,7 @@
 #include <fstream>
 #include <deque>
 #include <vector>
+#include "gmshparsercppEnums.h"
 
 namespace gmshparsercpp {
 
@@ -159,11 +160,11 @@ public:
         /// Block tag
         int tag;
         /// Element type
-        int element_type;
+        ElementType element_type;
         /// Elements
         std::vector<Element> elements;
 
-        ElementBlock() : dimension(-1), tag(-1), element_type(-1) {}
+        ElementBlock() : dimension(-1), tag(-1), element_type(NONE) {}
     };
 
     /// Construct MSH file
@@ -237,7 +238,7 @@ protected:
     const Token & peek();
     Token read();
     void read_end_section_marker(const std::string & section_name);
-    int get_nodes_per_element(int element_type);
+    int get_nodes_per_element(ElementType element_type);
 
     /// File name
     std::string file_name;

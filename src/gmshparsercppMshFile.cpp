@@ -325,7 +325,7 @@ MshFile::process_elements_section()
         ElementBlock blk;
         blk.dimension = read().as_int();
         blk.tag = read().as_int();
-        blk.element_type = read().as_int();
+        blk.element_type = static_cast<ElementType>(read().as_int());
         auto num_nodes_per_element = get_nodes_per_element(blk.element_type);
         auto num_elements_in_block = read().as_int();
         for (int j = 0; j < num_elements_in_block; j++) {
@@ -366,43 +366,43 @@ MshFile::skip_section()
 }
 
 int
-MshFile::get_nodes_per_element(int element_type)
+MshFile::get_nodes_per_element(ElementType element_type)
 {
     // clang-format off
     switch (element_type) {
-        case 1: return 2;
-        case 2: return 3;
-        case 3: return 4;
-        case 4: return 4;
-        case 5: return 8;
-        case 6: return 6;
-        case 7: return 5;
-        case 8: return 3;
-        case 9: return 6;
-        case 10: return 9;
-        case 11: return 10;
-        case 12: return 27;
-        case 13: return 18;
-        case 14: return 14;
-        case 15: return 1;
-        case 16: return 8;
-        case 17: return 20;
-        case 18: return 15;
-        case 19: return 13;
-        case 20: return 9;
-        case 21: return 10;
-        case 22: return 12;
-        case 23: return 15;
-        case 24: return 15;
-        case 25: return 21;
-        case 26: return 4;
-        case 27: return 5;
-        case 28: return 6;
-        case 29: return 20;
-        case 30: return 35;
-        case 31: return 56;
-        case 92: return 64;
-        case 93: return 125;
+        case LINE2: return 2;
+        case TRI3: return 3;
+        case QUAD4: return 4;
+        case TET4: return 4;
+        case HEX8: return 8;
+        case PRISM6: return 6;
+        case PYRAMID5: return 5;
+        case LINE3: return 3;
+        case TRI6: return 6;
+        case QUAD9: return 9;
+        case TET10: return 10;
+        case HEX27: return 27;
+        case PRISM18: return 18;
+        case PYRAMID14: return 14;
+        case POINT: return 1;
+        case QUAD8: return 8;
+        case HEX20: return 20;
+        case PRISM15: return 15;
+        case PYRAMID13: return 13;
+        case ITRI9: return 9;
+        case TRI10: return 10;
+        case ITRI12: return 12;
+        case TRI15: return 15;
+        case ITRI15: return 15;
+        case TRI21: return 21;
+        case LINE4: return 4;
+        case LINE5: return 5;
+        case LINE6: return 6;
+        case TET20: return 20;
+        case TET35: return 35;
+        case TET56: return 56;
+        case HEX64: return 64;
+        case HEX125: return 125;
         default:
             throw std::domain_error(fmt::sprintf("Unknown element type '%d'", element_type));
     }
