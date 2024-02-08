@@ -4,7 +4,7 @@
 #include <fstream>
 #include <deque>
 #include <vector>
-#include "gmshparsercppEnums.h"
+#include "Enums.h"
 
 namespace gmshparsercpp {
 
