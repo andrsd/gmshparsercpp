@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 project(gmshparsercpp
-    VERSION 1.1
+    VERSION 1.3
     LANGUAGES CXX
 )
 
