@@ -23,7 +23,6 @@ set_property(CACHE GMSHPARSERCPP_LIBRARY_TYPE PROPERTY STRINGS ${LibraryTypeValu
 option(GMSHPARSERCPP_BUILD_TESTS "Build tests" NO)
 
 find_package(fmt REQUIRED)
-find_package(FLEX REQUIRED)
 
 FetchContent_Declare(
     googletest

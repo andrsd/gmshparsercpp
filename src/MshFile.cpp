@@ -1,5 +1,5 @@
 #include "gmshparsercpp/MshFile.h"
-#include "MshLexer.h"
+#include "gmshparsercpp/MshLexer.h"
 #include "fmt/printf.h"
 #include <system_error>
 

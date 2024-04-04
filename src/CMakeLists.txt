@@ -1,7 +1,7 @@
 add_library(${PROJECT_NAME}
     ${GMSHPARSERCPP_LIBRARY_TYPE}
         MshFile.cpp
-        ${CMAKE_CURRENT_BINARY_DIR}/MshLexer.cpp
+        MshLexer.cpp
 )
 
 if(CMAKE_PROJECT_NAME STREQUAL "gmshparsercpp")
@@ -26,12 +26,6 @@ target_include_directories(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
         fmt::fmt
-)
-
-add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/MshLexer.cpp
-    COMMAND ${FLEX_EXECUTABLE} -o ${CMAKE_CURRENT_BINARY_DIR}/MshLexer.cpp ${PROJECT_SOURCE_DIR}/src/msh.lex
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 install(
