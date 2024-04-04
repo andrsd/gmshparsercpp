@@ -1,21 +1,16 @@
 #include "gmshparsercpp/MshFile.h"
-#include "gmshparsercpp/MshLexer.h"
 #include "fmt/printf.h"
 #include <system_error>
-
-int
-mshFlexLexer::yywrap()
-{
-    return 1;
-}
 
 namespace gmshparsercpp {
 
 MshFile::MshFile(const std::string & file_name) :
     file_name(file_name),
     file(this->file_name),
+    lexer(&this->file),
     version(0.),
-    binary(false)
+    binary(false),
+    endianness(0)
 {
     if (!this->file.is_open())
         throw std::system_error(std::error_code(),
@@ -84,23 +79,56 @@ MshFile::get_element_blocks() const
 void
 MshFile::parse()
 {
-    mshFlexLexer lexer(&this->file);
-    int res;
-    while ((res = lexer.yylex()) != 0) {
-        auto type = static_cast<Token::EType>(res);
-        Token token = { type, std::string(lexer.YYText(), lexer.YYLeng()), lexer.lineno() };
-        this->tokens.push_back(token);
-    }
-    this->tokens.push_back({ Token::EndOfFile });
+    MshLexer::Token token = this->lexer.peek();
+    do {
+        if (token.type == MshLexer::Token::Section) {
+            token = this->lexer.read();
+            process_section(token);
+        }
+        else
+            throw std::runtime_error("Expected start of section marker not found.");
+        token = this->lexer.peek();
+    } while (token.type != MshLexer::Token::EndOfFile);
+}
 
-    process_tokens();
+void
+MshFile::process_section(const MshLexer::Token & token)
+{
+    if (token.str == "$MeshFormat")
+        process_mesh_format_section();
+    else if (token.str == "$PhysicalNames")
+        process_physical_names_section();
+    else if (token.str == "$Entities")
+        process_entities_section();
+    else if (token.str == "$PartitionedEntities")
+        skip_section();
+    else if (token.str == "$Nodes")
+        process_nodes_section();
+    else if (token.str == "$Elements")
+        process_elements_section();
+    else if (token.str == "$Periodic")
+        skip_section();
+    else if (token.str == "$GhostElements")
+        skip_section();
+    else if (token.str == "$Parametrizations")
+        skip_section();
+    else if (token.str == "$NodeData")
+        skip_section();
+    else if (token.str == "$ElementData")
+        skip_section();
+    else if (token.str == "$ElementNodeData")
+        skip_section();
+    else if (token.str == "$InterpolationScheme")
+        skip_section();
+    else
+        skip_section();
 }
 
 void
 MshFile::process_tokens()
 {
-    const auto & next = peek();
-    if (next.type == Token::Section) {
+    const auto & next = this->lexer.peek();
+    if (next.type == MshLexer::Token::Section) {
         if (next.str == "$MeshFormat") {
             process_mesh_format_section();
             process_optional_sections();
@@ -115,90 +143,35 @@ MshFile::process_tokens()
 void
 MshFile::process_optional_sections()
 {
-    Token next = peek();
-    while (next.type != Token::EndOfFile) {
-        if (next.type == Token::Section) {
-            if (next.str == "$PhysicalNames")
-                process_physical_names_section();
-            else if (next.str == "$Entities")
-                process_entities_section();
-            else if (next.str == "$PartitionedEntities")
-                skip_section();
-            else if (next.str == "$Nodes")
-                process_nodes_section();
-            else if (next.str == "$Elements")
-                process_elements_section();
-            else if (next.str == "$Periodic")
-                skip_section();
-            else if (next.str == "$GhostElements")
-                skip_section();
-            else if (next.str == "$Parametrizations")
-                skip_section();
-            else if (next.str == "$NodeData")
-                skip_section();
-            else if (next.str == "$ElementData")
-                skip_section();
-            else if (next.str == "$ElementNodeData")
-                skip_section();
-            else if (next.str == "$InterpolationScheme")
-                skip_section();
-            else
-                skip_section();
-            next = peek();
-        }
-        else
-            throw std::runtime_error("Expected section marker not found.");
-    }
-}
-
-const MshFile::Token &
-MshFile::peek()
-{
-    return this->tokens.front();
-}
-
-MshFile::Token
-MshFile::read()
-{
-    if (!this->tokens.empty()) {
-        auto token = this->tokens.front();
-        this->tokens.pop_front();
-        return token;
-    }
-    else
-        throw std::runtime_error("Unexpected end of file.");
 }
 
 void
 MshFile::read_end_section_marker(const std::string & section_name)
 {
-    auto sct_end = read();
-    if (sct_end.type != Token::Section || sct_end.str != section_name)
+    auto sct_end = this->lexer.read();
+    if (sct_end.type != MshLexer::Token::Section || sct_end.str != section_name)
         throw std::runtime_error(fmt::sprintf("%s tag not found.", section_name));
 }
 
 void
 MshFile::process_mesh_format_section()
 {
-    auto sct_start = read();
-
-    this->version = read().as_float();
-    this->binary = read().as_int() == 1;
-    auto data_size = read();
-
+    this->version = this->lexer.read().as_float();
+    this->binary = this->lexer.read().as_int() == 1;
+    auto data_size = this->lexer.read();
+    if (this->binary)
+        this->endianness = this->lexer.read_blob<int>();
     read_end_section_marker("$EndMeshFormat");
 }
 
 void
 MshFile::process_physical_names_section()
 {
-    auto sct_start = read();
-
-    auto num_entities = read().as_int();
+    auto num_entities = this->lexer.read().as_int();
     for (int i = 0; i < num_entities; i++) {
-        auto dimension = read().as_int();
-        auto tag = read().as_int();
-        auto name = read().as_string();
+        auto dimension = this->lexer.read().as_int();
+        auto tag = this->lexer.read().as_int();
+        auto name = this->lexer.read().as_string();
         PhysicalName pn = { dimension, tag, name };
         this->physical_names.push_back(pn);
     }
@@ -209,32 +182,30 @@ MshFile::process_physical_names_section()
 void
 MshFile::process_entities_section()
 {
-    auto sct_start = read();
-
-    auto num_points = read().as_int();
-    auto num_curves = read().as_int();
-    auto num_surfaces = read().as_int();
-    auto num_volumes = read().as_int();
+    auto num_points = this->lexer.read().as_int();
+    auto num_curves = this->lexer.read().as_int();
+    auto num_surfaces = this->lexer.read().as_int();
+    auto num_volumes = this->lexer.read().as_int();
 
     for (int i = 0; i < num_points; i++) {
         PointEntity pe;
-        pe.tag = read().as_int();
-        pe.x = read().as_float();
-        pe.y = read().as_float();
-        pe.z = read().as_float();
+        pe.tag = this->lexer.read().as_int();
+        pe.x = this->lexer.read().as_float();
+        pe.y = this->lexer.read().as_float();
+        pe.z = this->lexer.read().as_float();
         pe.physical_tags = process_array_of_ints();
         this->point_entities.push_back(pe);
     }
 
     for (int i = 0; i < num_curves; i++) {
         MultiDEntity ent;
-        ent.tag = read().as_int();
-        ent.min_x = read().as_float();
-        ent.min_y = read().as_float();
-        ent.min_z = read().as_float();
-        ent.max_x = read().as_float();
-        ent.max_y = read().as_float();
-        ent.max_z = read().as_float();
+        ent.tag = this->lexer.read().as_int();
+        ent.min_x = this->lexer.read().as_float();
+        ent.min_y = this->lexer.read().as_float();
+        ent.min_z = this->lexer.read().as_float();
+        ent.max_x = this->lexer.read().as_float();
+        ent.max_y = this->lexer.read().as_float();
+        ent.max_z = this->lexer.read().as_float();
         ent.physical_tags = process_array_of_ints();
         ent.bounding_tags = process_array_of_ints();
         this->curve_entities.push_back(ent);
@@ -242,13 +213,13 @@ MshFile::process_entities_section()
 
     for (int i = 0; i < num_surfaces; i++) {
         MultiDEntity ent;
-        ent.tag = read().as_int();
-        ent.min_x = read().as_float();
-        ent.min_y = read().as_float();
-        ent.min_z = read().as_float();
-        ent.max_x = read().as_float();
-        ent.max_y = read().as_float();
-        ent.max_z = read().as_float();
+        ent.tag = this->lexer.read().as_int();
+        ent.min_x = this->lexer.read().as_float();
+        ent.min_y = this->lexer.read().as_float();
+        ent.min_z = this->lexer.read().as_float();
+        ent.max_x = this->lexer.read().as_float();
+        ent.max_y = this->lexer.read().as_float();
+        ent.max_z = this->lexer.read().as_float();
         ent.physical_tags = process_array_of_ints();
         ent.bounding_tags = process_array_of_ints();
         this->surface_entities.push_back(ent);
@@ -256,13 +227,13 @@ MshFile::process_entities_section()
 
     for (int i = 0; i < num_volumes; i++) {
         MultiDEntity ent;
-        ent.tag = read().as_int();
-        ent.min_x = read().as_float();
-        ent.min_y = read().as_float();
-        ent.min_z = read().as_float();
-        ent.max_x = read().as_float();
-        ent.max_y = read().as_float();
-        ent.max_z = read().as_float();
+        ent.tag = this->lexer.read().as_int();
+        ent.min_x = this->lexer.read().as_float();
+        ent.min_y = this->lexer.read().as_float();
+        ent.min_z = this->lexer.read().as_float();
+        ent.max_x = this->lexer.read().as_float();
+        ent.max_y = this->lexer.read().as_float();
+        ent.max_z = this->lexer.read().as_float();
         ent.physical_tags = process_array_of_ints();
         ent.bounding_tags = process_array_of_ints();
         this->volume_entities.push_back(ent);
@@ -274,34 +245,32 @@ MshFile::process_entities_section()
 void
 MshFile::process_nodes_section()
 {
-    auto sct_start = read();
-
-    auto num_entity_blocks = read().as_int();
-    auto num_nodes = read().as_int();
-    auto min_node_tag = read().as_int();
-    auto max_node_tag = read().as_int();
+    auto num_entity_blocks = this->lexer.read().as_int();
+    auto num_nodes = this->lexer.read().as_int();
+    auto min_node_tag = this->lexer.read().as_int();
+    auto max_node_tag = this->lexer.read().as_int();
 
     for (int i = 0; i < num_entity_blocks; i++) {
         Node node;
-        node.dimension = read().as_int();
-        node.entity_tag = read().as_int();
-        node.parametric = read().as_int() == 1;
+        node.dimension = this->lexer.read().as_int();
+        node.entity_tag = this->lexer.read().as_int();
+        node.parametric = this->lexer.read().as_int() == 1;
         // NOTE: it is not 100% clear from the doco how to read this section
         node.tags = process_array_of_ints();
         for (std::size_t i = 0; i < node.tags.size(); i++) {
             Point pt;
-            pt.x = read().as_float();
-            pt.y = read().as_float();
-            pt.z = read().as_float();
+            pt.x = this->lexer.read().as_float();
+            pt.y = this->lexer.read().as_float();
+            pt.z = this->lexer.read().as_float();
             node.coordinates.push_back(pt);
             if (node.parametric) {
                 Point par_pr;
                 if (node.dimension >= 1)
-                    par_pr.x = read().as_float();
+                    par_pr.x = this->lexer.read().as_float();
                 if (node.dimension >= 2)
-                    par_pr.y = read().as_float();
+                    par_pr.y = this->lexer.read().as_float();
                 if (node.dimension == 3)
-                    par_pr.z = read().as_float();
+                    par_pr.z = this->lexer.read().as_float();
                 node.par_coords.push_back(par_pr);
             }
         }
@@ -314,25 +283,23 @@ MshFile::process_nodes_section()
 void
 MshFile::process_elements_section()
 {
-    auto sct_start = read();
-
-    auto num_entity_blocks = read().as_int();
-    auto num_elements = read().as_int();
-    auto min_node_tag = read().as_int();
-    auto max_node_tag = read().as_int();
+    auto num_entity_blocks = this->lexer.read().as_int();
+    auto num_elements = this->lexer.read().as_int();
+    auto min_node_tag = this->lexer.read().as_int();
+    auto max_node_tag = this->lexer.read().as_int();
 
     for (int i = 0; i < num_entity_blocks; i++) {
         ElementBlock blk;
-        blk.dimension = read().as_int();
-        blk.tag = read().as_int();
-        blk.element_type = static_cast<ElementType>(read().as_int());
+        blk.dimension = this->lexer.read().as_int();
+        blk.tag = this->lexer.read().as_int();
+        blk.element_type = static_cast<ElementType>(this->lexer.read().as_int());
         auto num_nodes_per_element = get_nodes_per_element(blk.element_type);
-        auto num_elements_in_block = read().as_int();
+        auto num_elements_in_block = this->lexer.read().as_int();
         for (int j = 0; j < num_elements_in_block; j++) {
             Element el;
-            el.tag = read().as_int();
+            el.tag = this->lexer.read().as_int();
             for (int k = 0; k < num_nodes_per_element; k++) {
-                auto tag = read().as_int();
+                auto tag = this->lexer.read().as_int();
                 el.node_tags.push_back(tag);
             }
             blk.elements.push_back(el);
@@ -347,9 +314,9 @@ std::vector<int>
 MshFile::process_array_of_ints()
 {
     std::vector<int> array;
-    auto n = read().as_int();
+    auto n = this->lexer.read().as_int();
     for (int i = 0; i < n; i++) {
-        auto num = read().as_int();
+        auto num = this->lexer.read().as_int();
         array.push_back(num);
     }
     return array;
@@ -358,11 +325,10 @@ MshFile::process_array_of_ints()
 void
 MshFile::skip_section()
 {
-    auto token = read();
-
+    MshLexer::Token token;
     do {
-        token = read();
-    } while (token.type != Token::Section);
+        token = this->lexer.read();
+    } while (token.type != MshLexer::Token::Section);
 }
 
 int
