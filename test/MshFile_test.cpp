@@ -26,9 +26,9 @@ TEST(MshFileTest, header)
     EXPECT_TRUE(f.is_ascii());
 }
 
-TEST(MshFileTest, quad)
+TEST(MshFileTest, quad_v4_asc)
 {
-    std::string file_name = std::string(GMSHPARSERCPP_ASSETS_DIR) + std::string("/quad.msh");
+    std::string file_name = std::string(GMSHPARSERCPP_ASSETS_DIR) + std::string("/quad-v4.asc.msh");
     MshFile f(file_name);
     EXPECT_NO_THROW({ f.parse(); });
     EXPECT_EQ(f.get_version(), 4.1);
@@ -51,6 +51,63 @@ TEST(MshFileTest, quad)
 
     auto el_blks = f.get_element_blocks();
     EXPECT_EQ(el_blks.size(), 9);
+}
+
+TEST(MshFileTest, quad_v4_bin)
+{
+    std::string file_name = std::string(GMSHPARSERCPP_ASSETS_DIR) + std::string("/quad-v4.bin.msh");
+    MshFile f(file_name);
+    EXPECT_NO_THROW({ f.parse(); });
+    EXPECT_EQ(f.get_version(), 4.1);
+    EXPECT_FALSE(f.is_ascii());
+
+    std::vector<MshFile::PhysicalName> test_phys_names = { MshFile::PhysicalName(1, 5, "bottom"),
+                                                           MshFile::PhysicalName(1, 6, "left"),
+                                                           MshFile::PhysicalName(1, 7, "top"),
+                                                           MshFile::PhysicalName(1, 8, "right") };
+    auto phys_names = f.get_physical_names();
+    EXPECT_EQ(phys_names.size(), 4);
+    for (std::size_t i = 0; i < phys_names.size(); i++) {
+        EXPECT_EQ(phys_names[i].dimension, test_phys_names[i].dimension);
+        EXPECT_EQ(phys_names[i].tag, test_phys_names[i].tag);
+        EXPECT_STREQ(phys_names[i].name.c_str(), test_phys_names[i].name.c_str());
+    }
+
+    auto nodes = f.get_nodes();
+    EXPECT_EQ(nodes.size(), 8);
+
+    auto el_blks = f.get_element_blocks();
+    EXPECT_EQ(el_blks.size(), 4);
+}
+
+TEST(MshFileTest, quad_v2_asc)
+{
+    std::string file_name = std::string(GMSHPARSERCPP_ASSETS_DIR) + std::string("/quad-v2.asc.msh");
+    MshFile f(file_name);
+    EXPECT_NO_THROW({ f.parse(); });
+    EXPECT_EQ(f.get_version(), 2.2);
+    EXPECT_TRUE(f.is_ascii());
+
+    auto nodes = f.get_nodes();
+    EXPECT_EQ(nodes.size(), 4);
+
+    auto el_blks = f.get_element_blocks();
+    EXPECT_EQ(el_blks.size(), 4);
+}
+
+TEST(MshFileTest, quad_v2_bin)
+{
+    std::string file_name = std::string(GMSHPARSERCPP_ASSETS_DIR) + std::string("/quad-v2.asc.msh");
+    MshFile f(file_name);
+    EXPECT_NO_THROW({ f.parse(); });
+    EXPECT_EQ(f.get_version(), 2.2);
+    EXPECT_TRUE(f.is_ascii());
+
+    auto nodes = f.get_nodes();
+    EXPECT_EQ(nodes.size(), 4);
+
+    auto el_blks = f.get_element_blocks();
+    EXPECT_EQ(el_blks.size(), 4);
 }
 
 TEST(MshFileTest, two_blk)

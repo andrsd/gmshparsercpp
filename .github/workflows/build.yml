@@ -39,7 +39,6 @@ jobs:
             cmake \
             make \
             automake \
-            flex \
             clangxx \
             fmt==9.1.0 \
             lcov
