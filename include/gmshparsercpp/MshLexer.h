@@ -16,35 +16,17 @@ public:
         /// Line number
         int line_no;
 
-        int
-        as_int() const
+        template <typename T>
+        T
+        as() const
         {
-            if (this->type == Number)
-                return std::stoi(this->str);
-            else
-                throw std::domain_error("Token is not a number");
-        }
-
-        double
-        as_float() const
-        {
-            if (this->type == Number)
-                return std::stod(this->str);
-            else
-                throw std::domain_error("Token is not a number");
-        }
-
-        std::string
-        as_string() const
-        {
-            if (this->type == String)
-                return this->str;
-            else
-                throw std::domain_error("Token is not a string");
+            throw std::runtime_error("Unsupported type");
         }
     };
 
     explicit MshLexer(std::ifstream * in);
+
+    void set_binary(bool state);
 
     /// Look at the next token awaiting in the input stream
     Token peek();
@@ -62,6 +44,16 @@ public:
         return val;
     }
 
+    template <typename T>
+    T
+    get()
+    {
+        if (this->binary)
+            return read_blob<T>();
+        else
+            return read().as<T>();
+    }
+
 private:
     /// Read a token from an input stream
     Token read_token();
@@ -76,6 +68,48 @@ private:
     bool have_token;
     /// Cached token
     Token curr;
+    ///
+    bool binary;
 };
+
+template <>
+inline int
+MshLexer::Token::as() const
+{
+    if (this->type == Number)
+        return std::stoi(this->str);
+    else
+        throw std::domain_error("Token is not a number");
+}
+
+template <>
+inline size_t
+MshLexer::Token::as() const
+{
+    if (this->type == Number)
+        return std::stol(this->str);
+    else
+        throw std::domain_error("Token is not a number");
+}
+
+template <>
+inline double
+MshLexer::Token::as() const
+{
+    if (this->type == Number)
+        return std::stod(this->str);
+    else
+        throw std::domain_error("Token is not a number");
+}
+
+template <>
+inline std::string
+MshLexer::Token::as() const
+{
+    if (this->type == String)
+        return this->str;
+    else
+        throw std::domain_error("Token is not a string");
+}
 
 } // namespace gmshparsercpp

@@ -125,27 +125,6 @@ MshFile::process_section(const MshLexer::Token & token)
 }
 
 void
-MshFile::process_tokens()
-{
-    const auto & next = this->lexer.peek();
-    if (next.type == MshLexer::Token::Section) {
-        if (next.str == "$MeshFormat") {
-            process_mesh_format_section();
-            process_optional_sections();
-        }
-        else
-            throw std::runtime_error("Expected $MeshFormat section marker not found.");
-    }
-    else
-        throw std::runtime_error("Expected start of section marker not found.");
-}
-
-void
-MshFile::process_optional_sections()
-{
-}
-
-void
 MshFile::read_end_section_marker(const std::string & section_name)
 {
     auto sct_end = this->lexer.read();
@@ -156,22 +135,36 @@ MshFile::read_end_section_marker(const std::string & section_name)
 void
 MshFile::process_mesh_format_section()
 {
-    this->version = this->lexer.read().as_float();
-    this->binary = this->lexer.read().as_int() == 1;
-    auto data_size = this->lexer.read();
-    if (this->binary)
-        this->endianness = this->lexer.read_blob<int>();
+    this->version = this->lexer.read().as<double>();
+    this->binary = this->lexer.read().as<int>() == 1;
+    auto data_size = this->lexer.read().as<int>();
+    int maj_ver = this->version;
+    if (maj_ver == 2) {
+        if (data_size != sizeof(double))
+            throw std::runtime_error(fmt::format("Unexpected data size found {}.", data_size));
+    }
+    else if (maj_ver == 4) {
+        if (data_size != sizeof(size_t))
+            throw std::runtime_error(fmt::format("Unexpected data size found {}.", data_size));
+        if (this->binary)
+            this->endianness = this->lexer.read_blob<int>();
+    }
+    else
+        throw std::runtime_error(fmt::format("Unsupported version {}", this->version));
+
     read_end_section_marker("$EndMeshFormat");
+
+    this->lexer.set_binary(this->binary);
 }
 
 void
 MshFile::process_physical_names_section()
 {
-    auto num_entities = this->lexer.read().as_int();
+    auto num_entities = this->lexer.read().as<int>();
     for (int i = 0; i < num_entities; i++) {
-        auto dimension = this->lexer.read().as_int();
-        auto tag = this->lexer.read().as_int();
-        auto name = this->lexer.read().as_string();
+        auto dimension = this->lexer.read().as<int>();
+        auto tag = this->lexer.read().as<int>();
+        auto name = this->lexer.read().as<std::string>();
         PhysicalName pn = { dimension, tag, name };
         this->physical_names.push_back(pn);
     }
@@ -182,141 +175,233 @@ MshFile::process_physical_names_section()
 void
 MshFile::process_entities_section()
 {
-    auto num_points = this->lexer.read().as_int();
-    auto num_curves = this->lexer.read().as_int();
-    auto num_surfaces = this->lexer.read().as_int();
-    auto num_volumes = this->lexer.read().as_int();
+    auto num_points = this->lexer.get<size_t>();
+    auto num_curves = this->lexer.get<size_t>();
+    auto num_surfaces = this->lexer.get<size_t>();
+    auto num_volumes = this->lexer.get<size_t>();
 
-    for (int i = 0; i < num_points; i++) {
+    for (size_t i = 0; i < num_points; i++) {
         PointEntity pe;
-        pe.tag = this->lexer.read().as_int();
-        pe.x = this->lexer.read().as_float();
-        pe.y = this->lexer.read().as_float();
-        pe.z = this->lexer.read().as_float();
+        pe.tag = this->lexer.get<int>();
+        pe.x = this->lexer.get<double>();
+        pe.y = this->lexer.get<double>();
+        pe.z = this->lexer.get<double>();
         pe.physical_tags = process_array_of_ints();
         this->point_entities.push_back(pe);
     }
 
-    for (int i = 0; i < num_curves; i++) {
+    for (size_t i = 0; i < num_curves; i++) {
         MultiDEntity ent;
-        ent.tag = this->lexer.read().as_int();
-        ent.min_x = this->lexer.read().as_float();
-        ent.min_y = this->lexer.read().as_float();
-        ent.min_z = this->lexer.read().as_float();
-        ent.max_x = this->lexer.read().as_float();
-        ent.max_y = this->lexer.read().as_float();
-        ent.max_z = this->lexer.read().as_float();
+        ent.tag = this->lexer.get<int>();
+        ent.min_x = this->lexer.get<double>();
+        ent.min_y = this->lexer.get<double>();
+        ent.min_z = this->lexer.get<double>();
+        ent.max_x = this->lexer.get<double>();
+        ent.max_y = this->lexer.get<double>();
+        ent.max_z = this->lexer.get<double>();
         ent.physical_tags = process_array_of_ints();
         ent.bounding_tags = process_array_of_ints();
         this->curve_entities.push_back(ent);
     }
 
-    for (int i = 0; i < num_surfaces; i++) {
+    for (size_t i = 0; i < num_surfaces; i++) {
         MultiDEntity ent;
-        ent.tag = this->lexer.read().as_int();
-        ent.min_x = this->lexer.read().as_float();
-        ent.min_y = this->lexer.read().as_float();
-        ent.min_z = this->lexer.read().as_float();
-        ent.max_x = this->lexer.read().as_float();
-        ent.max_y = this->lexer.read().as_float();
-        ent.max_z = this->lexer.read().as_float();
+        ent.tag = this->lexer.get<int>();
+        ent.min_x = this->lexer.get<double>();
+        ent.min_y = this->lexer.get<double>();
+        ent.min_z = this->lexer.get<double>();
+        ent.max_x = this->lexer.get<double>();
+        ent.max_y = this->lexer.get<double>();
+        ent.max_z = this->lexer.get<double>();
         ent.physical_tags = process_array_of_ints();
         ent.bounding_tags = process_array_of_ints();
         this->surface_entities.push_back(ent);
     }
 
-    for (int i = 0; i < num_volumes; i++) {
+    for (size_t i = 0; i < num_volumes; i++) {
         MultiDEntity ent;
-        ent.tag = this->lexer.read().as_int();
-        ent.min_x = this->lexer.read().as_float();
-        ent.min_y = this->lexer.read().as_float();
-        ent.min_z = this->lexer.read().as_float();
-        ent.max_x = this->lexer.read().as_float();
-        ent.max_y = this->lexer.read().as_float();
-        ent.max_z = this->lexer.read().as_float();
+        ent.tag = this->lexer.get<int>();
+        ent.min_x = this->lexer.get<double>();
+        ent.min_y = this->lexer.get<double>();
+        ent.min_z = this->lexer.get<double>();
+        ent.max_x = this->lexer.get<double>();
+        ent.max_y = this->lexer.get<double>();
+        ent.max_z = this->lexer.get<double>();
         ent.physical_tags = process_array_of_ints();
         ent.bounding_tags = process_array_of_ints();
         this->volume_entities.push_back(ent);
     }
-
     read_end_section_marker("$EndEntities");
 }
 
 void
 MshFile::process_nodes_section()
 {
-    auto num_entity_blocks = this->lexer.read().as_int();
-    auto num_nodes = this->lexer.read().as_int();
-    auto min_node_tag = this->lexer.read().as_int();
-    auto max_node_tag = this->lexer.read().as_int();
+    int maj_ver = this->version;
+    if (maj_ver == 2)
+        process_nodes_section_v2();
+    else if (maj_ver == 4)
+        process_nodes_section_v4();
+    read_end_section_marker("$EndNodes");
+}
+
+void
+MshFile::process_nodes_section_v2()
+{
+    auto num_nodes = this->lexer.read().as<size_t>();
+    for (auto i = 0; i < num_nodes; i++) {
+        Node node;
+        node.dimension = 0;
+        node.entity_tag = this->lexer.get<int>();
+
+        Point pt;
+        pt.x = this->lexer.get<double>();
+        pt.y = this->lexer.get<double>();
+        pt.z = this->lexer.get<double>();
+        node.coordinates.push_back(pt);
+        node.tags.push_back(node.entity_tag);
+        this->nodes.push_back(node);
+    }
+}
+
+void
+MshFile::process_nodes_section_v4()
+{
+    auto num_entity_blocks = this->lexer.get<size_t>();
+    auto num_nodes = this->lexer.get<size_t>();
+    auto min_node_tag = this->lexer.get<size_t>();
+    auto max_node_tag = this->lexer.get<size_t>();
 
     for (int i = 0; i < num_entity_blocks; i++) {
         Node node;
-        node.dimension = this->lexer.read().as_int();
-        node.entity_tag = this->lexer.read().as_int();
-        node.parametric = this->lexer.read().as_int() == 1;
-        // NOTE: it is not 100% clear from the doco how to read this section
-        node.tags = process_array_of_ints();
-        for (std::size_t i = 0; i < node.tags.size(); i++) {
+        node.dimension = this->lexer.get<int>();
+        node.entity_tag = this->lexer.get<int>();
+        node.parametric = this->lexer.get<int>() == 1;
+        auto num_nodes_in_block = this->lexer.get<size_t>();
+        for (std::size_t i = 0; i < num_nodes_in_block; i++) {
+            auto tag = this->lexer.get<size_t>();
+            node.tags.push_back(tag);
+        }
+        for (std::size_t i = 0; i < num_nodes_in_block; i++) {
             Point pt;
-            pt.x = this->lexer.read().as_float();
-            pt.y = this->lexer.read().as_float();
-            pt.z = this->lexer.read().as_float();
+            pt.x = this->lexer.get<double>();
+            pt.y = this->lexer.get<double>();
+            pt.z = this->lexer.get<double>();
             node.coordinates.push_back(pt);
             if (node.parametric) {
                 Point par_pr;
                 if (node.dimension >= 1)
-                    par_pr.x = this->lexer.read().as_float();
+                    par_pr.x = this->lexer.get<double>();
                 if (node.dimension >= 2)
-                    par_pr.y = this->lexer.read().as_float();
+                    par_pr.y = this->lexer.get<double>();
                 if (node.dimension == 3)
-                    par_pr.z = this->lexer.read().as_float();
+                    par_pr.z = this->lexer.get<double>();
                 node.par_coords.push_back(par_pr);
             }
         }
         this->nodes.push_back(node);
     }
-
-    read_end_section_marker("$EndNodes");
 }
 
 void
 MshFile::process_elements_section()
 {
-    auto num_entity_blocks = this->lexer.read().as_int();
-    auto num_elements = this->lexer.read().as_int();
-    auto min_node_tag = this->lexer.read().as_int();
-    auto max_node_tag = this->lexer.read().as_int();
+    int maj_ver = this->version;
+    if (maj_ver == 2)
+        process_elements_section_v2();
+    else if (maj_ver == 4)
+        process_elements_section_v4();
+    read_end_section_marker("$EndElements");
+}
+
+void
+MshFile::process_elements_section_v2()
+{
+    auto num_elements = this->lexer.read().as<size_t>();
+    if (this->binary) {
+        for (auto i = 0; i < num_elements; i++) {
+            auto el_type = static_cast<ElementType>(this->lexer.get<int>());
+            auto dim = get_element_dimension(el_type);
+            auto n_els = this->lexer.get<int>();
+            auto two = this->lexer.get<int>();
+            for (auto k = 0; k < n_els; k++) {
+                Element el;
+
+                el.tag = this->lexer.get<int>();
+                auto phys = this->lexer.get<int>();
+                auto ent = this->lexer.get<int>();
+                auto n_elem_nodes = get_nodes_per_element(el_type);
+                for (auto j = 0; j < n_elem_nodes; j++) {
+                    auto nid = this->lexer.get<size_t>();
+                    el.node_tags.push_back(nid);
+                }
+                auto & blk = get_element_block_by_tag_create(phys);
+                blk.tag = phys;
+                blk.dimension = dim;
+                blk.element_type = el_type;
+                blk.elements.push_back(el);
+            }
+        }
+    }
+    else {
+        for (auto i = 0; i < num_elements; i++) {
+            Element el;
+            el.tag = this->lexer.get<int>();
+            auto el_type = static_cast<ElementType>(this->lexer.get<int>());
+            auto two = this->lexer.get<int>();
+            auto phys = this->lexer.get<int>();
+            auto ent = this->lexer.get<int>();
+            auto dim = get_element_dimension(el_type);
+            auto n_elem_nodes = get_nodes_per_element(el_type);
+            for (auto j = 0; j < n_elem_nodes; j++) {
+                auto nid = this->lexer.get<size_t>();
+                el.node_tags.push_back(nid);
+            }
+
+            auto & blk = get_element_block_by_tag_create(phys);
+            blk.tag = phys;
+            blk.dimension = dim;
+            blk.element_type = el_type;
+            blk.elements.push_back(el);
+        }
+    }
+}
+
+void
+MshFile::process_elements_section_v4()
+{
+    auto num_entity_blocks = this->lexer.get<size_t>();
+    auto num_elements = this->lexer.get<size_t>();
+    auto min_node_tag = this->lexer.get<size_t>();
+    auto max_node_tag = this->lexer.get<size_t>();
 
     for (int i = 0; i < num_entity_blocks; i++) {
         ElementBlock blk;
-        blk.dimension = this->lexer.read().as_int();
-        blk.tag = this->lexer.read().as_int();
-        blk.element_type = static_cast<ElementType>(this->lexer.read().as_int());
+        blk.dimension = this->lexer.get<int>();
+        blk.tag = this->lexer.get<int>();
+        blk.element_type = static_cast<ElementType>(this->lexer.get<int>());
         auto num_nodes_per_element = get_nodes_per_element(blk.element_type);
-        auto num_elements_in_block = this->lexer.read().as_int();
-        for (int j = 0; j < num_elements_in_block; j++) {
+        auto num_elements_in_block = this->lexer.get<size_t>();
+        for (size_t j = 0; j < num_elements_in_block; j++) {
             Element el;
-            el.tag = this->lexer.read().as_int();
+            el.tag = this->lexer.get<size_t>();
             for (int k = 0; k < num_nodes_per_element; k++) {
-                auto tag = this->lexer.read().as_int();
+                auto tag = this->lexer.get<size_t>();
                 el.node_tags.push_back(tag);
             }
             blk.elements.push_back(el);
         }
         this->element_blocks.push_back(blk);
     }
-
-    read_end_section_marker("$EndElements");
 }
 
 std::vector<int>
 MshFile::process_array_of_ints()
 {
     std::vector<int> array;
-    auto n = this->lexer.read().as_int();
-    for (int i = 0; i < n; i++) {
-        auto num = this->lexer.read().as_int();
+    auto n = this->lexer.get<size_t>();
+    for (size_t i = 0; i < n; i++) {
+        auto num = this->lexer.get<int>();
         array.push_back(num);
     }
     return array;
@@ -373,6 +458,68 @@ MshFile::get_nodes_per_element(ElementType element_type)
             throw std::domain_error(fmt::sprintf("Unknown element type '%d'", element_type));
     }
     // clang-format on
+}
+
+int
+MshFile::get_element_dimension(ElementType element_type)
+{
+    switch (element_type) {
+    case POINT:
+        return 0;
+
+    case LINE2:
+    case LINE3:
+    case LINE4:
+    case LINE5:
+    case LINE6:
+        return 1;
+
+    case TRI3:
+    case QUAD4:
+    case TRI6:
+    case QUAD9:
+    case QUAD8:
+    case ITRI9:
+    case TRI10:
+    case ITRI12:
+    case TRI15:
+    case ITRI15:
+    case TRI21:
+        return 2;
+
+    case TET4:
+    case HEX8:
+    case PRISM6:
+    case PYRAMID5:
+    case TET10:
+    case HEX27:
+    case PRISM18:
+    case PYRAMID14:
+    case HEX20:
+    case PRISM15:
+    case PYRAMID13:
+    case TET20:
+    case TET35:
+    case TET56:
+    case HEX64:
+    case HEX125:
+        return 3;
+
+    default:
+        throw std::domain_error(fmt::sprintf("Unknown element type '%d'", element_type));
+    }
+}
+
+MshFile::ElementBlock &
+MshFile::get_element_block_by_tag_create(int tag)
+{
+    for (auto & eblk : this->element_blocks) {
+        if (eblk.tag == tag)
+            return eblk;
+    }
+    ElementBlock blk;
+    this->element_blocks.push_back(blk);
+    return this->element_blocks.back();
 }
 
 void

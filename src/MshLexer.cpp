@@ -3,7 +3,13 @@
 
 namespace gmshparsercpp {
 
-MshLexer::MshLexer(std::ifstream * in) : in(in), have_token(false) {}
+MshLexer::MshLexer(std::ifstream * in) : in(in), have_token(false), binary(false) {}
+
+void
+MshLexer::set_binary(bool state)
+{
+    this->binary = state;
+}
 
 MshLexer::Token
 MshLexer::read()
@@ -28,7 +34,7 @@ MshLexer::read_token()
 {
     while (true) {
         if (this->in->peek() == EOF) {
-            Token t = { Token::EndOfFile, "", -1};
+            Token t = { Token::EndOfFile, "", -1 };
             return t;
         }
 

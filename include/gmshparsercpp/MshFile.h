@@ -13,8 +13,6 @@ class MshLexer;
 /// Class for parsing MSH files
 ///
 class MshFile {
-protected:
-
 public:
     struct PhysicalName {
         /// Physical entity dimension
@@ -192,17 +190,21 @@ public:
 
 protected:
     void process_section(const MshLexer::Token & token);
-    void process_tokens();
-    void process_optional_sections();
     void process_mesh_format_section();
     void process_physical_names_section();
     void process_entities_section();
     void process_nodes_section();
+    void process_nodes_section_v2();
+    void process_nodes_section_v4();
     void process_elements_section();
+    void process_elements_section_v2();
+    void process_elements_section_v4();
     std::vector<int> process_array_of_ints();
     void skip_section();
     void read_end_section_marker(const std::string & section_name);
     int get_nodes_per_element(ElementType element_type);
+    int get_element_dimension(ElementType element_type);
+    ElementBlock & get_element_block_by_tag_create(int tag);
 
     /// File name
     std::string file_name;
