@@ -138,12 +138,10 @@ MshFile::process_mesh_format_section()
     this->binary = this->lexer.read().as<int>() == 1;
     auto data_size = this->lexer.read().as<int>();
     int maj_ver = this->version;
-    if (maj_ver == 2) {
-        if (data_size != sizeof(double))
+    if (maj_ver == 2 || maj_ver == 4) {
+        if ((maj_ver == 2) && (data_size != sizeof(double)))
             throw Exception("Unexpected data size found: {}", data_size);
-    }
-    else if (maj_ver == 4) {
-        if (data_size != sizeof(size_t))
+        else if ((maj_ver == 4) && (data_size != sizeof(size_t)))
             throw Exception("Unexpected data size found: {}", data_size);
         if (this->binary)
             this->endianness = this->lexer.read_blob<int>();
@@ -331,7 +329,7 @@ MshFile::process_elements_section_v2()
                 auto ent = this->lexer.get<int>();
                 auto n_elem_nodes = get_nodes_per_element(el_type);
                 for (auto j = 0; j < n_elem_nodes; j++) {
-                    auto nid = this->lexer.get<size_t>();
+                    auto nid = this->lexer.get<int>();
                     el.node_tags.push_back(nid);
                 }
                 auto & blk = get_element_block_by_tag_create(phys);

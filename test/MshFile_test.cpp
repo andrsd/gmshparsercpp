@@ -154,11 +154,11 @@ TEST(MshFileTest, quad_v2_asc)
 
 TEST(MshFileTest, quad_v2_bin)
 {
-    std::string file_name = std::string(GMSHPARSERCPP_ASSETS_DIR) + std::string("/quad-v2.asc.msh");
+    std::string file_name = std::string(GMSHPARSERCPP_ASSETS_DIR) + std::string("/quad-v2.bin.msh");
     MshFile f(file_name);
     EXPECT_NO_THROW({ f.parse(); });
     EXPECT_EQ(f.get_version(), 2.2);
-    EXPECT_TRUE(f.is_ascii());
+    EXPECT_FALSE(f.is_ascii());
 
     auto nodes = f.get_nodes();
     EXPECT_EQ(nodes.size(), 4);
