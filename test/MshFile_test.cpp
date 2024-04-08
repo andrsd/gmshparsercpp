@@ -117,6 +117,7 @@ TEST(MshFileTest, quad_v4_asc)
 
                                                      { { 0.5, 0.5, 0. } } };
     for (int i = 0; i < nodes.size(); i++) {
+        EXPECT_EQ(nodes[i].dimension, dims[i]);
         ASSERT_EQ(nodes[i].coordinates.size(), pts[i].size());
         for (int j = 0; j < nodes[i].coordinates.size(); j++) {
             EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].x, pts[i][j].x);
@@ -173,6 +174,7 @@ TEST(MshFileTest, quad_v4_bin)
                                                      {},
                                                      {} };
     for (int i = 0; i < nodes.size(); i++) {
+        EXPECT_EQ(nodes[i].dimension, dims[i]);
         EXPECT_EQ(nodes[i].coordinates.size(), pts[i].size());
         for (int j = 0; j < nodes[i].coordinates.size(); j++) {
             EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].x, pts[i][j].x);
