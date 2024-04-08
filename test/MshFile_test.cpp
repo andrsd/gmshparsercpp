@@ -104,9 +104,41 @@ TEST(MshFileTest, quad_v4_asc)
 
     auto nodes = f.get_nodes();
     EXPECT_EQ(nodes.size(), 9);
+    std::vector<int> dims = { 0, 0, 0, 0, 1, 1, 1, 1, 2 };
+    std::vector<std::vector<MshFile::Point>> pts = { { { 0., 0., 0. } },
+                                                     { { 1., 0., 0. } },
+                                                     { { 1., 1., 0. } },
+                                                     { { 0., 1., 0. } },
+
+                                                     {},
+                                                     {},
+                                                     {},
+                                                     {},
+
+                                                     { { 0.5, 0.5, 0. } } };
+    for (int i = 0; i < nodes.size(); i++) {
+        ASSERT_EQ(nodes[i].coordinates.size(), pts[i].size());
+        for (int j = 0; j < nodes[i].coordinates.size(); j++) {
+            EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].x, pts[i][j].x);
+            EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].y, pts[i][j].y);
+            EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].z, pts[i][j].z);
+        }
+    }
 
     auto el_blks = f.get_element_blocks();
     EXPECT_EQ(el_blks.size(), 9);
+    std::vector<std::vector<std::vector<int>>> conn = {
+        { { 1 } },    { { 2 } },    { { 3 } },
+        { { 4 } },    { { 1, 2 } }, { { 2, 3 } },
+        { { 3, 4 } }, { { 4, 1 } }, { { 2, 5, 1 }, { 1, 5, 4 }, { 3, 5, 2 }, { 4, 5, 3 } },
+    };
+    for (int i = 0; i < el_blks.size(); i++) {
+        EXPECT_EQ(el_blks[i].elements.size(), conn[i].size());
+        for (int j = 0; j < el_blks[i].elements.size(); j++) {
+            for (int k = 0; k < el_blks[i].elements[j].node_tags.size(); k++)
+                EXPECT_EQ(el_blks[i].elements[j].node_tags[k], conn[i][j][k]);
+        }
+    }
 }
 
 TEST(MshFileTest, quad_v4_bin)
@@ -131,9 +163,39 @@ TEST(MshFileTest, quad_v4_bin)
 
     auto nodes = f.get_nodes();
     EXPECT_EQ(nodes.size(), 8);
+    std::vector<int> dims = { 0, 0, 0, 0, 1, 1, 1, 1 };
+    std::vector<std::vector<MshFile::Point>> pts = { { { 0., 0., 0. } },
+                                                     { { 1., 0., 0. } },
+                                                     { { 1., 1., 0. } },
+                                                     { { 0., 1., 0. } },
+                                                     {},
+                                                     {},
+                                                     {},
+                                                     {} };
+    for (int i = 0; i < nodes.size(); i++) {
+        EXPECT_EQ(nodes[i].coordinates.size(), pts[i].size());
+        for (int j = 0; j < nodes[i].coordinates.size(); j++) {
+            EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].x, pts[i][j].x);
+            EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].y, pts[i][j].y);
+            EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].z, pts[i][j].z);
+        }
+    }
 
     auto el_blks = f.get_element_blocks();
     EXPECT_EQ(el_blks.size(), 4);
+    std::vector<std::vector<std::vector<int>>> conn = {
+        { { 1, 2 } },
+        { { 2, 3 } },
+        { { 3, 4 } },
+        { { 4, 1 } },
+    };
+    for (int i = 0; i < el_blks.size(); i++) {
+        EXPECT_EQ(el_blks[i].elements.size(), conn[i].size());
+        for (int j = 0; j < el_blks[i].elements.size(); j++) {
+            for (int k = 0; k < el_blks[i].elements[j].node_tags.size(); k++)
+                EXPECT_EQ(el_blks[i].elements[j].node_tags[k], conn[i][j][k]);
+        }
+    }
 }
 
 TEST(MshFileTest, quad_v2_asc)
@@ -146,9 +208,39 @@ TEST(MshFileTest, quad_v2_asc)
 
     auto nodes = f.get_nodes();
     EXPECT_EQ(nodes.size(), 4);
+    std::vector<int> dims = { 0, 0, 0, 0, 1, 1, 1, 1 };
+    std::vector<std::vector<MshFile::Point>> pts = { { { 0., 0., 0. } },
+                                                     { { 1., 0., 0. } },
+                                                     { { 1., 1., 0. } },
+                                                     { { 0., 1., 0. } },
+                                                     {},
+                                                     {},
+                                                     {},
+                                                     {} };
+    for (int i = 0; i < nodes.size(); i++) {
+        EXPECT_EQ(nodes[i].coordinates.size(), pts[i].size());
+        for (int j = 0; j < nodes[i].coordinates.size(); j++) {
+            EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].x, pts[i][j].x);
+            EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].y, pts[i][j].y);
+            EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].z, pts[i][j].z);
+        }
+    }
 
     auto el_blks = f.get_element_blocks();
     EXPECT_EQ(el_blks.size(), 4);
+    std::vector<std::vector<std::vector<int>>> conn = {
+        { { 1, 2 } },
+        { { 2, 3 } },
+        { { 3, 4 } },
+        { { 4, 1 } },
+    };
+    for (int i = 0; i < el_blks.size(); i++) {
+        EXPECT_EQ(el_blks[i].elements.size(), conn[i].size());
+        for (int j = 0; j < el_blks[i].elements.size(); j++) {
+            for (int k = 0; k < el_blks[i].elements[j].node_tags.size(); k++)
+                EXPECT_EQ(el_blks[i].elements[j].node_tags[k], conn[i][j][k]);
+        }
+    }
 }
 
 TEST(MshFileTest, quad_v2_bin)
@@ -161,9 +253,39 @@ TEST(MshFileTest, quad_v2_bin)
 
     auto nodes = f.get_nodes();
     EXPECT_EQ(nodes.size(), 4);
+    std::vector<int> dims = { 0, 0, 0, 0, 1, 1, 1, 1 };
+    std::vector<std::vector<MshFile::Point>> pts = { { { 0., 0., 0. } },
+                                                     { { 1., 0., 0. } },
+                                                     { { 1., 1., 0. } },
+                                                     { { 0., 1., 0. } },
+                                                     {},
+                                                     {},
+                                                     {},
+                                                     {} };
+    for (int i = 0; i < nodes.size(); i++) {
+        EXPECT_EQ(nodes[i].coordinates.size(), pts[i].size());
+        for (int j = 0; j < nodes[i].coordinates.size(); j++) {
+            EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].x, pts[i][j].x);
+            EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].y, pts[i][j].y);
+            EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].z, pts[i][j].z);
+        }
+    }
 
     auto el_blks = f.get_element_blocks();
     EXPECT_EQ(el_blks.size(), 4);
+    std::vector<std::vector<std::vector<int>>> conn = {
+        { { 1, 2 } },
+        { { 2, 3 } },
+        { { 3, 4 } },
+        { { 4, 1 } },
+    };
+    for (int i = 0; i < el_blks.size(); i++) {
+        EXPECT_EQ(el_blks[i].elements.size(), conn[i].size());
+        for (int j = 0; j < el_blks[i].elements.size(); j++) {
+            for (int k = 0; k < el_blks[i].elements[j].node_tags.size(); k++)
+                EXPECT_EQ(el_blks[i].elements[j].node_tags[k], conn[i][j][k]);
+        }
+    }
 }
 
 TEST(MshFileTest, two_blk)
