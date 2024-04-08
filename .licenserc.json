@@ -1,0 +1,10 @@
+{
+    "src/*.cpp": [
+        "// SPDX-FileCopyrightText:",
+        "// SPDX-License-Identifier:"
+    ],
+    "include/gmshparsercpp/*.h": [
+        "// SPDX-FileCopyrightText:",
+        "// SPDX-License-Identifier:"
+    ]
+}
