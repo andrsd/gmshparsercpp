@@ -1,6 +1,7 @@
 #pragma once
 
 #include <fstream>
+#include "gmshparsercpp/Exception.h"
 
 namespace gmshparsercpp {
 
@@ -20,7 +21,7 @@ public:
         T
         as() const
         {
-            throw std::runtime_error("Unsupported type");
+            throw Exception("Unsupported type");
         }
     };
 
@@ -79,7 +80,7 @@ MshLexer::Token::as() const
     if (this->type == Number)
         return std::stoi(this->str);
     else
-        throw std::domain_error("Token is not a number");
+        throw Exception("Token is not a number");
 }
 
 template <>
@@ -89,7 +90,7 @@ MshLexer::Token::as() const
     if (this->type == Number)
         return std::stol(this->str);
     else
-        throw std::domain_error("Token is not a number");
+        throw Exception("Token is not a number");
 }
 
 template <>
@@ -99,7 +100,7 @@ MshLexer::Token::as() const
     if (this->type == Number)
         return std::stod(this->str);
     else
-        throw std::domain_error("Token is not a number");
+        throw Exception("Token is not a number");
 }
 
 template <>
@@ -109,7 +110,7 @@ MshLexer::Token::as() const
     if (this->type == String)
         return this->str;
     else
-        throw std::domain_error("Token is not a string");
+        throw Exception("Token is not a string");
 }
 
 } // namespace gmshparsercpp

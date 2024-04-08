@@ -99,7 +99,7 @@ MshLexer::read_char()
     char ch;
     this->in->read(&ch, sizeof(ch));
     if (ch == EOF)
-        throw std::runtime_error("Reached end of file");
+        throw Exception("Reached end of file");
     return ch;
 }
 
@@ -108,7 +108,7 @@ MshLexer::peek_char()
 {
     auto ch = this->in->peek();
     if (ch == EOF)
-        throw std::runtime_error("Reached end of file");
+        throw Exception("Reached end of file");
     return ch;
 }
 

@@ -4,6 +4,7 @@
 #include <fstream>
 #include <vector>
 #include "gmshparsercpp/Enums.h"
+#include "gmshparsercpp/Exception.h"
 #include "gmshparsercpp/MshLexer.h"
 
 namespace gmshparsercpp {
