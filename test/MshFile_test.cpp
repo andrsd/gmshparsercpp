@@ -46,7 +46,6 @@ TEST(MshFileTest, missing_end_section_marker)
         "$EndMeshFormat tag not found.");
 }
 
-
 TEST(MshFileTest, unsupported_version)
 {
     std::string file_name =
@@ -253,4 +252,46 @@ TEST(MshFileTest, two_blk)
 
     auto el_blks = f.get_element_blocks();
     EXPECT_EQ(el_blks.size(), 8);
+}
+
+TEST(MshFileTest, element_dim)
+{
+    std::vector<gmshparsercpp::ElementType> d0 = { POINT };
+    for (auto & d : d0)
+        EXPECT_EQ(MshFile::get_element_dimension(d), 0);
+
+    std::vector<gmshparsercpp::ElementType> d1 = { LINE2, LINE3, LINE4, LINE5, LINE6 };
+    for (auto & d : d1)
+        EXPECT_EQ(MshFile::get_element_dimension(d), 1);
+
+    std::vector<gmshparsercpp::ElementType> d2 = { TRI3,  QUAD4,  TRI6,  QUAD9,  QUAD8, ITRI9,
+                                                   TRI10, ITRI12, TRI15, ITRI15, TRI21 };
+    for (auto & d : d2)
+        EXPECT_EQ(MshFile::get_element_dimension(d), 2);
+
+    std::vector<gmshparsercpp::ElementType> d3 = { TET4,  HEX8,    PRISM6,    PYRAMID5,
+                                                   TET10, HEX27,   PRISM18,   PYRAMID14,
+                                                   HEX20, PRISM15, PYRAMID13, TET20,
+                                                   TET35, TET56,   HEX64,     HEX125 };
+    for (auto & d : d3)
+        EXPECT_EQ(MshFile::get_element_dimension(d), 3);
+
+    EXPECT_THROW_MSG(MshFile::get_element_dimension(NONE), "Unknown element type '-1'");
+}
+
+TEST(MshFileTest, num_element_nodes)
+{
+    std::vector<std::pair<ElementType, int>> nodes = {
+        { LINE2, 2 },  { TRI3, 3 },     { QUAD4, 4 },    { TET4, 4 },       { HEX8, 8 },
+        { PRISM6, 6 }, { PYRAMID5, 5 }, { LINE3, 3 },    { TRI6, 6 },       { QUAD9, 9 },
+        { TET10, 10 }, { HEX27, 27 },   { PRISM18, 18 }, { PYRAMID14, 14 }, { POINT, 1 },
+        { QUAD8, 8 },  { HEX20, 20 },   { PRISM15, 15 }, { PYRAMID13, 13 }, { ITRI9, 9 },
+        { TRI10, 10 }, { ITRI12, 12 },  { TRI15, 15 },   { ITRI15, 15 },    { TRI21, 21 },
+        { LINE4, 4 },  { LINE5, 5 },    { LINE6, 6 },    { TET20, 20 },     { TET35, 35 },
+        { TET56, 56 }, { HEX64, 64 },   { HEX125, 125 }
+    };
+    for (auto & n : nodes)
+        EXPECT_EQ(MshFile::get_nodes_per_element(n.first), n.second);
+
+    EXPECT_THROW_MSG(MshFile::get_nodes_per_element(NONE), "Unknown element type '-1'");
 }
