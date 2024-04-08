@@ -27,6 +27,14 @@ TEST(MshFileTest, header)
     EXPECT_TRUE(f.is_ascii());
 }
 
+TEST(MshFileTest, non_existent_file)
+{
+    std::string file_name =
+        std::string(GMSHPARSERCPP_ASSETS_DIR) + std::string("/non-existent-file.msh");
+    EXPECT_THAT_THROW_MSG({ MshFile f(file_name); },
+                          MatchesRegex("Unable to open file '.+/non-existent-file.msh'."));
+}
+
 TEST(MshFileTest, quad_v4_asc)
 {
     std::string file_name = std::string(GMSHPARSERCPP_ASSETS_DIR) + std::string("/quad-v4.asc.msh");
