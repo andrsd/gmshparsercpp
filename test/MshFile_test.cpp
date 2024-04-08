@@ -35,6 +35,18 @@ TEST(MshFileTest, non_existent_file)
                           MatchesRegex("Unable to open file '.+/non-existent-file.msh'."));
 }
 
+TEST(MshFileTest, missing_end_section_marker)
+{
+    std::string file_name =
+        std::string(GMSHPARSERCPP_ASSETS_DIR) + std::string("/missing-end-section-marker.msh");
+    EXPECT_THROW_MSG(
+        {
+            MshFile f(file_name);
+            f.parse();
+        },
+        "$EndMeshFormat tag not found.");
+}
+
 TEST(MshFileTest, quad_v4_asc)
 {
     std::string file_name = std::string(GMSHPARSERCPP_ASSETS_DIR) + std::string("/quad-v4.asc.msh");
