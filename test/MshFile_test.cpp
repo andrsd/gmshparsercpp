@@ -59,6 +59,30 @@ TEST(MshFileTest, unsupported_version)
         "Unsupported version 1");
 }
 
+TEST(MshFileTest, unsupported_data_size_v2)
+{
+    std::string file_name =
+        std::string(GMSHPARSERCPP_ASSETS_DIR) + std::string("/unsupported-data-size-v2.msh");
+    EXPECT_THROW_MSG(
+        {
+            MshFile f(file_name);
+            f.parse();
+        },
+        "Unexpected data size found: 4");
+}
+
+TEST(MshFileTest, unsupported_data_size_v4)
+{
+    std::string file_name =
+        std::string(GMSHPARSERCPP_ASSETS_DIR) + std::string("/unsupported-data-size-v4.msh");
+    EXPECT_THROW_MSG(
+        {
+            MshFile f(file_name);
+            f.parse();
+        },
+        "Unexpected data size found: 4");
+}
+
 TEST(MshFileTest, quad_v4_asc)
 {
     std::string file_name = std::string(GMSHPARSERCPP_ASSETS_DIR) + std::string("/quad-v4.asc.msh");

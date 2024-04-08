@@ -140,11 +140,11 @@ MshFile::process_mesh_format_section()
     int maj_ver = this->version;
     if (maj_ver == 2) {
         if (data_size != sizeof(double))
-            throw Exception("Unexpected data size found {}.", data_size);
+            throw Exception("Unexpected data size found: {}", data_size);
     }
     else if (maj_ver == 4) {
         if (data_size != sizeof(size_t))
-            throw Exception("Unexpected data size found {}.", data_size);
+            throw Exception("Unexpected data size found: {}", data_size);
         if (this->binary)
             this->endianness = this->lexer.read_blob<int>();
     }
