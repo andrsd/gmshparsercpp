@@ -1,5 +1,6 @@
 #include <gmock/gmock.h>
 #include "TestConfig.h"
+#include "ExceptionTestMacros.h"
 #include "gmshparsercpp/MshFile.h"
 
 using namespace gmshparsercpp;
@@ -7,14 +8,14 @@ using namespace testing;
 
 TEST(MshFileTest, empty)
 {
-    EXPECT_THROW(
+    EXPECT_THROW_MSG(
         {
             std::string file_name =
                 std::string(GMSHPARSERCPP_ASSETS_DIR) + std::string("/empty.msh");
             MshFile f(file_name);
             f.parse();
         },
-        std::runtime_error);
+        "Expected start of section marker not found.");
 }
 
 TEST(MshFileTest, header)
