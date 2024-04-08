@@ -34,7 +34,6 @@ TEST(MshFileTest, non_existent_file)
     EXPECT_THAT_THROW_MSG({ MshFile f(file_name); },
                           MatchesRegex("Unable to open file '.+/non-existent-file.msh'."));
 }
-
 TEST(MshFileTest, missing_end_section_marker)
 {
     std::string file_name =
@@ -45,6 +44,19 @@ TEST(MshFileTest, missing_end_section_marker)
             f.parse();
         },
         "$EndMeshFormat tag not found.");
+}
+
+
+TEST(MshFileTest, unsupported_version)
+{
+    std::string file_name =
+        std::string(GMSHPARSERCPP_ASSETS_DIR) + std::string("/unsupported-version.msh");
+    EXPECT_THROW_MSG(
+        {
+            MshFile f(file_name);
+            f.parse();
+        },
+        "Unsupported version 1");
 }
 
 TEST(MshFileTest, quad_v4_asc)
