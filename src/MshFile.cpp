@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2022 David Andrs <andrsd@gmail.com>
+// SPDX-License-Identifier: MIT
+
 #include "gmshparsercpp/MshFile.h"
 #include "fmt/printf.h"
 #include <system_error>
