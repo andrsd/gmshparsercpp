@@ -36,8 +36,6 @@ if(GMSHPARSERCPP_CODE_COVERAGE)
             --ignore-filename-regex=/include/gtest/*
             --ignore-filename-regex=/include/gmock/*
             --ignore-filename-regex=test/*
-            --ignore-filename-regex=gmshparsercppMshLexer.cpp
-            --ignore-filename-regex=FlexLexer.h
         )
 
         set(CODE_COVERAGE_BINS
@@ -123,8 +121,6 @@ if(GMSHPARSERCPP_CODE_COVERAGE)
             --exclude=*/include/gmock/*
             --exclude=*/include/fmt/*
             --exclude=/usr/include/*
-            --exclude=gmshparsercppMshLexer.cpp
-            --exclude=FlexLexer.h
         )
 
         add_custom_target(coverage DEPENDS ${COVERAGE_INFO})

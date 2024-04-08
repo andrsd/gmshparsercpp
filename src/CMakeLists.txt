@@ -1,5 +1,6 @@
 add_library(${PROJECT_NAME}
     ${GMSHPARSERCPP_LIBRARY_TYPE}
+        Exception.cpp
         MshFile.cpp
         MshLexer.cpp
 )

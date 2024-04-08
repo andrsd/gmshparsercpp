@@ -13,8 +13,7 @@ MshFile::MshFile(const std::string & file_name) :
     endianness(0)
 {
     if (!this->file.is_open())
-        throw std::system_error(std::error_code(),
-                                fmt::sprintf("Unable to open file '%s'.", this->file_name));
+        throw Exception("Unable to open file '{}'.", this->file_name);
 }
 
 MshFile::~MshFile()
@@ -86,7 +85,7 @@ MshFile::parse()
             process_section(token);
         }
         else
-            throw std::runtime_error("Expected start of section marker not found.");
+            throw Exception("Expected start of section marker not found.");
         token = this->lexer.peek();
     } while (token.type != MshLexer::Token::EndOfFile);
 }
@@ -129,7 +128,7 @@ MshFile::read_end_section_marker(const std::string & section_name)
 {
     auto sct_end = this->lexer.read();
     if (sct_end.type != MshLexer::Token::Section || sct_end.str != section_name)
-        throw std::runtime_error(fmt::sprintf("%s tag not found.", section_name));
+        throw Exception("{} tag not found.", section_name);
 }
 
 void
@@ -139,18 +138,16 @@ MshFile::process_mesh_format_section()
     this->binary = this->lexer.read().as<int>() == 1;
     auto data_size = this->lexer.read().as<int>();
     int maj_ver = this->version;
-    if (maj_ver == 2) {
-        if (data_size != sizeof(double))
-            throw std::runtime_error(fmt::format("Unexpected data size found {}.", data_size));
-    }
-    else if (maj_ver == 4) {
-        if (data_size != sizeof(size_t))
-            throw std::runtime_error(fmt::format("Unexpected data size found {}.", data_size));
+    if (maj_ver == 2 || maj_ver == 4) {
+        if ((maj_ver == 2) && (data_size != sizeof(double)))
+            throw Exception("Unexpected data size found: {}", data_size);
+        else if ((maj_ver == 4) && (data_size != sizeof(size_t)))
+            throw Exception("Unexpected data size found: {}", data_size);
         if (this->binary)
             this->endianness = this->lexer.read_blob<int>();
     }
     else
-        throw std::runtime_error(fmt::format("Unsupported version {}", this->version));
+        throw Exception("Unsupported version {}", this->version);
 
     read_end_section_marker("$EndMeshFormat");
 
@@ -332,7 +329,7 @@ MshFile::process_elements_section_v2()
                 auto ent = this->lexer.get<int>();
                 auto n_elem_nodes = get_nodes_per_element(el_type);
                 for (auto j = 0; j < n_elem_nodes; j++) {
-                    auto nid = this->lexer.get<size_t>();
+                    auto nid = this->lexer.get<int>();
                     el.node_tags.push_back(nid);
                 }
                 auto & blk = get_element_block_by_tag_create(phys);
@@ -455,7 +452,7 @@ MshFile::get_nodes_per_element(ElementType element_type)
         case HEX64: return 64;
         case HEX125: return 125;
         default:
-            throw std::domain_error(fmt::sprintf("Unknown element type '%d'", element_type));
+            throw Exception("Unknown element type '{}'", element_type);
     }
     // clang-format on
 }
@@ -506,7 +503,7 @@ MshFile::get_element_dimension(ElementType element_type)
         return 3;
 
     default:
-        throw std::domain_error(fmt::sprintf("Unknown element type '%d'", element_type));
+        throw Exception("Unknown element type '{}'", element_type);
     }
 }
 
