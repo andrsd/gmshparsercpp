@@ -46,22 +46,22 @@ install(
 )
 
 include(CMakePackageConfigHelpers)
-write_basic_package_version_file(gmshparsercppConfigVersion.cmake
+write_basic_package_version_file(gmshparsercpp-config-version.cmake
     VERSION ${PROJECT_VERSION}
     COMPATIBILITY AnyNewerVersion
 )
 
 install(
     EXPORT gmshparsercppTargets
-    FILE gmshparsercppTargets.cmake
+    FILE gmshparsercpp-targets.cmake
     NAMESPACE gmshparsercpp::
     DESTINATION lib/cmake/gmshparsercpp
 )
 
 install(
     FILES
-        "${PROJECT_SOURCE_DIR}/cmake/gmshparsercppConfig.cmake"
-        "${CMAKE_CURRENT_BINARY_DIR}/gmshparsercppConfigVersion.cmake"
+        "${PROJECT_SOURCE_DIR}/cmake/gmshparsercpp-config.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/gmshparsercpp-config-version.cmake"
     DESTINATION
         lib/cmake/gmshparsercpp
 )
