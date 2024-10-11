@@ -8,6 +8,7 @@ mark_as_advanced(FORCE GMSHPARSERCPP_ASSETS_DIR)
 
 add_executable(${PROJECT_NAME}
     main.cpp
+    Edge1D_test.cpp
     MshFile_test.cpp
     Prism3D_test.cpp
     Quad2D_test.cpp
