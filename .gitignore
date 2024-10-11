@@ -3,3 +3,4 @@ build-*/
 .idea/
 src/gmshparsercppMshLexer.h
 .DS_Store
+.zed
