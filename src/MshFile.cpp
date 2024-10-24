@@ -335,9 +335,7 @@ MshFile::process_elements_section_v2()
                     auto nid = this->lexer.get<int>();
                     el.node_tags.push_back(nid);
                 }
-                auto & blk = get_element_block_by_tag_create(phys);
-                blk.tag = phys;
-                blk.dimension = dim;
+                auto & blk = get_element_block_by_tag_create(dim, phys);
                 blk.element_type = el_type;
                 blk.elements.push_back(el);
             }
@@ -358,9 +356,7 @@ MshFile::process_elements_section_v2()
                 el.node_tags.push_back(nid);
             }
 
-            auto & blk = get_element_block_by_tag_create(phys);
-            blk.tag = phys;
-            blk.dimension = dim;
+            auto & blk = get_element_block_by_tag_create(dim, phys);
             blk.element_type = el_type;
             blk.elements.push_back(el);
         }
@@ -511,13 +507,15 @@ MshFile::get_element_dimension(ElementType element_type)
 }
 
 MshFile::ElementBlock &
-MshFile::get_element_block_by_tag_create(int tag)
+MshFile::get_element_block_by_tag_create(int dim, int tag)
 {
     for (auto & eblk : this->element_blocks) {
-        if (eblk.tag == tag)
+        if ((eblk.tag == tag) && (eblk.dimension == dim))
             return eblk;
     }
     ElementBlock blk;
+    blk.tag = tag;
+    blk.dimension = dim;
     this->element_blocks.push_back(blk);
     return this->element_blocks.back();
 }

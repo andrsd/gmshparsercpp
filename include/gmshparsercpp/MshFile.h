@@ -219,7 +219,7 @@ protected:
     std::vector<int> process_array_of_ints();
     void skip_section();
     void read_end_section_marker(const std::string & section_name);
-    ElementBlock & get_element_block_by_tag_create(int tag);
+    ElementBlock & get_element_block_by_tag_create(int dim, int tag);
 
     /// File name
     std::string file_name;
