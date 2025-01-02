@@ -4,14 +4,15 @@ find_package(Doxygen QUIET)
 
 if(DOXYGEN_FOUND)
     find_program(SPHINX_BUILD sphinx-build)
-    mark_as_advanced(FORCE
-        SPHINX_BUILD
-    )
+    mark_as_advanced(FORCE SPHINX_BUILD)
 
     configure_file(Doxyfile.in Doxyfile)
     configure_file(conf.py.in conf.py)
 
-    add_custom_target(doc DEPENDS ${PROJECT_BINARY_DIR}/docs/html/index.html)
+    add_custom_target(doc
+        DEPENDS ${PROJECT_BINARY_DIR}/docs/html/index.html
+        COMMENT "Open ${PROJECT_BINARY_DIR}/docs/html/index.html in your browser to view the documentation."
+    )
 
     file(GLOB_RECURSE RST_FILES ${PROJECT_SOURCE_DIR}/docs/*.rst)
 
@@ -34,14 +35,6 @@ if(DOXYGEN_FOUND)
         DEPENDS
             ${PROJECT_BINARY_DIR}/docs/Doxyfile
             ${PROJECT_SOURCE_DIR}/include/*.h
-    )
-
-    add_custom_command(
-        TARGET doc
-        POST_BUILD
-        COMMAND ;
-        COMMENT
-            "Open ${PROJECT_BINARY_DIR}/docs/html/index.html in your browser to view the documentation."
     )
 
 endif()
