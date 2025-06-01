@@ -3,6 +3,9 @@
 
 #pragma once
 
+#include <fmt/core.h>
+#include <fmt/format.h>
+
 namespace gmshparsercpp {
 
 /// See [1] for details
@@ -46,3 +49,92 @@ enum ElementType {
 };
 
 } // namespace gmshparsercpp
+
+template <>
+struct fmt::formatter<gmshparsercpp::ElementType> : fmt::formatter<std::string> {
+    auto
+    format(gmshparsercpp::ElementType e, fmt::format_context & ctx) const
+    {
+        std::string name;
+        switch (e) {
+        case gmshparsercpp::ElementType::NONE:
+            return fmt::formatter<std::string>::format("NONE", ctx);
+
+        case gmshparsercpp::ElementType::POINT:
+            return fmt::formatter<std::string>::format("POINT", ctx);
+
+        case gmshparsercpp::ElementType::LINE2:
+            return fmt::formatter<std::string>::format("LINE2", ctx);
+        case gmshparsercpp::ElementType::LINE3:
+            return fmt::formatter<std::string>::format("LINE3", ctx);
+        case gmshparsercpp::ElementType::LINE5:
+            return fmt::formatter<std::string>::format("LINE5", ctx);
+        case gmshparsercpp::ElementType::LINE6:
+            return fmt::formatter<std::string>::format("LINE6", ctx);
+
+        case gmshparsercpp::ElementType::TRI3:
+            return fmt::formatter<std::string>::format("TRI3", ctx);
+        case gmshparsercpp::ElementType::TRI6:
+            return fmt::formatter<std::string>::format("TRI6", ctx);
+        case gmshparsercpp::ElementType::TRI10:
+            return fmt::formatter<std::string>::format("TRI10", ctx);
+        case gmshparsercpp::ElementType::TRI15:
+            return fmt::formatter<std::string>::format("TRI15", ctx);
+        case gmshparsercpp::ElementType::TRI21:
+            return fmt::formatter<std::string>::format("TRI21", ctx);
+
+        case gmshparsercpp::ElementType::ITRI9:
+            return fmt::formatter<std::string>::format("ITRI9", ctx);
+        case gmshparsercpp::ElementType::ITRI12:
+            return fmt::formatter<std::string>::format("ITRI12", ctx);
+        case gmshparsercpp::ElementType::ITRI15:
+            return fmt::formatter<std::string>::format("ITRI15", ctx);
+
+        case gmshparsercpp::ElementType::QUAD4:
+            return fmt::formatter<std::string>::format("QUAD4", ctx);
+        case gmshparsercpp::ElementType::QUAD8:
+            return fmt::formatter<std::string>::format("QUAD8", ctx);
+        case gmshparsercpp::ElementType::QUAD9:
+            return fmt::formatter<std::string>::format("QUAD9", ctx);
+
+        case gmshparsercpp::ElementType::TET4:
+            return fmt::formatter<std::string>::format("TET4", ctx);
+        case gmshparsercpp::ElementType::TET10:
+            return fmt::formatter<std::string>::format("TET10", ctx);
+        case gmshparsercpp::ElementType::TET20:
+            return fmt::formatter<std::string>::format("TET20", ctx);
+        case gmshparsercpp::ElementType::TET35:
+            return fmt::formatter<std::string>::format("TET35", ctx);
+        case gmshparsercpp::ElementType::TET56:
+            return fmt::formatter<std::string>::format("TET56", ctx);
+
+        case gmshparsercpp::ElementType::HEX8:
+            return fmt::formatter<std::string>::format("HEX8", ctx);
+        case gmshparsercpp::ElementType::HEX20:
+            return fmt::formatter<std::string>::format("HEX20", ctx);
+        case gmshparsercpp::ElementType::HEX27:
+            return fmt::formatter<std::string>::format("HEX27", ctx);
+        case gmshparsercpp::ElementType::HEX64:
+            return fmt::formatter<std::string>::format("HEX64", ctx);
+        case gmshparsercpp::ElementType::HEX125:
+            return fmt::formatter<std::string>::format("HEX125", ctx);
+
+        case gmshparsercpp::ElementType::PRISM6:
+            return fmt::formatter<std::string>::format("PRISM6", ctx);
+        case gmshparsercpp::ElementType::PRISM18:
+            return fmt::formatter<std::string>::format("PRISM18", ctx);
+        case gmshparsercpp::ElementType::PRISM15:
+            return fmt::formatter<std::string>::format("PRISM15", ctx);
+
+        case gmshparsercpp::ElementType::PYRAMID5:
+            return fmt::formatter<std::string>::format("PYRAMID5", ctx);
+        case gmshparsercpp::ElementType::PYRAMID13:
+            return fmt::formatter<std::string>::format("PYRAMID13", ctx);
+        case gmshparsercpp::ElementType::PYRAMID14:
+            return fmt::formatter<std::string>::format("PYRAMID14", ctx);
+
+        default:
+            return fmt::formatter<std::string>::format("Unknown", ctx);
+        }
+    }
+};

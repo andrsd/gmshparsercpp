@@ -192,7 +192,7 @@ TEST(MshFileTest, element_dim)
     for (auto & d : d3)
         EXPECT_EQ(MshFile::get_element_dimension(d), 3);
 
-    EXPECT_THROW_MSG(MshFile::get_element_dimension(NONE), "Unknown element type '-1'");
+    EXPECT_THROW_MSG(MshFile::get_element_dimension(NONE), "Unknown element type 'NONE'");
 }
 
 TEST(MshFileTest, num_element_nodes)
@@ -209,5 +209,5 @@ TEST(MshFileTest, num_element_nodes)
     for (auto & n : nodes)
         EXPECT_EQ(MshFile::get_nodes_per_element(n.first), n.second);
 
-    EXPECT_THROW_MSG(MshFile::get_nodes_per_element(NONE), "Unknown element type '-1'");
+    EXPECT_THROW_MSG(MshFile::get_nodes_per_element(NONE), "Unknown element type 'NONE'");
 }
