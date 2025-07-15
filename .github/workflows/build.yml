@@ -46,6 +46,7 @@ jobs:
       - name: Configure
         run: |
           cmake -S . -B ${{ github.workspace }}/build \
+            -DGCOV_PATH=`which x86_64-conda-linux-gnu-gcov` \
             -DGMSHPARSERCPP_BUILD_TESTS=YES \
             -DGMSHPARSERCPP_CODE_COVERAGE=YES
 

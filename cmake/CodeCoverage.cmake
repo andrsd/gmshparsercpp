@@ -108,6 +108,10 @@ if(GMSHPARSERCPP_CODE_COVERAGE)
 
     elseif(CMAKE_C_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
         find_program(GCOV_PATH NAMES gcov)
+        if (NOT GCOV_PATH)
+            message(FATAL_ERROR "gcov not found!")
+        endif()
+
         find_program(LCOV_PATH lcov)
         find_program(GENHTML_PATH genhtml)
         mark_as_advanced(FORCE
@@ -134,6 +138,7 @@ if(GMSHPARSERCPP_CODE_COVERAGE)
                 --directory src
                 --directory test
                 --output-file ${COVERAGE_INFO}
+                --gcov-tool ${GCOV_PATH}
                 ${EXCLUDE_REGEX}
         )
 
