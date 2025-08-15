@@ -53,7 +53,24 @@ jobs:
         run: make -C ${{ github.workspace }}/build
 
       - name: Run tests
-        run: make -C ${{ github.workspace }}/build test ARGS='-V'
+        run: |
+          ${{ github.workspace }}/build/test/gmshparsercpp-test \
+            --gtest_output=xml:${{ github.workspace }}/build/gtest-results.xml
+
+      - name: Test summary
+        uses: test-summary/action@v2
+        if: always()
+        with:
+          paths: ${{ github.workspace }}/build/gtest-results.xml
+          show: "fail, skip"
+
+      - name: Upload test results to codecov.io
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ${{ github.workspace }}/build/gtest-results.xml
+          name: ${{ matrix.os }}
 
       - name: Generate code coverage
         if: startsWith(matrix.os, 'ubuntu')
@@ -77,7 +94,7 @@ jobs:
         uses: actions/download-artifact@v4
 
       - name: Upload to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -85,4 +102,4 @@ jobs:
         uses: codacy/codacy-coverage-reporter-action@v1
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          coverage-reports: 'coverage-ubuntu-22.04/coverage.info'
+          coverage-reports: "coverage-ubuntu-22.04/coverage.info"
