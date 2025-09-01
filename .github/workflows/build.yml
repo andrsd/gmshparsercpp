@@ -40,7 +40,7 @@ jobs:
             make \
             automake \
             clangxx \
-            fmt==9.1.0 \
+            fmt=11.* \
             lcov
 
       - name: Configure
