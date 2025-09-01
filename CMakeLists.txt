@@ -22,12 +22,12 @@ set_property(CACHE GMSHPARSERCPP_LIBRARY_TYPE PROPERTY STRINGS ${LibraryTypeValu
 
 option(GMSHPARSERCPP_BUILD_TESTS "Build tests" NO)
 
-find_package(fmt REQUIRED)
+find_package(fmt 11 REQUIRED)
 
 FetchContent_Declare(
     googletest
     GIT_REPOSITORY https://github.com/google/googletest.git
-    GIT_TAG        release-1.11.0
+    GIT_TAG        v1.15.2
 )
 set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
 mark_as_advanced(FORCE
