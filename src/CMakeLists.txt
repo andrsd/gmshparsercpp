@@ -29,39 +29,41 @@ target_link_libraries(${PROJECT_NAME}
         fmt::fmt
 )
 
-install(
-    TARGETS gmshparsercpp
-    EXPORT gmshparsercppTargets
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-    RUNTIME DESTINATION bin
-    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-)
+if (GMSHPARSERCPP_INSTALL)
+    install(
+        TARGETS gmshparsercpp
+        EXPORT gmshparsercpp-targets
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib
+        RUNTIME DESTINATION bin
+        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    )
 
-install(
-    DIRECTORY ${PROJECT_SOURCE_DIR}/include/
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
-    FILES_MATCHING PATTERN "*.h"
-)
+    install(
+        DIRECTORY ${PROJECT_SOURCE_DIR}/include/
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
+        FILES_MATCHING PATTERN "*.h"
+    )
 
-include(CMakePackageConfigHelpers)
-write_basic_package_version_file(gmshparsercpp-config-version.cmake
-    VERSION ${PROJECT_VERSION}
-    COMPATIBILITY AnyNewerVersion
-)
+    include(CMakePackageConfigHelpers)
+    write_basic_package_version_file(gmshparsercpp-config-version.cmake
+        VERSION ${PROJECT_VERSION}
+        COMPATIBILITY AnyNewerVersion
+    )
 
-install(
-    EXPORT gmshparsercppTargets
-    FILE gmshparsercpp-targets.cmake
-    NAMESPACE gmshparsercpp::
-    DESTINATION lib/cmake/gmshparsercpp
-)
+    install(
+        EXPORT gmshparsercpp-targets
+        FILE gmshparsercpp-targets.cmake
+        NAMESPACE gmshparsercpp::
+        DESTINATION lib/cmake/gmshparsercpp
+    )
 
-install(
-    FILES
-        "${PROJECT_SOURCE_DIR}/cmake/gmshparsercpp-config.cmake"
-        "${CMAKE_CURRENT_BINARY_DIR}/gmshparsercpp-config-version.cmake"
-    DESTINATION
-        lib/cmake/gmshparsercpp
-)
+    install(
+        FILES
+            "${PROJECT_SOURCE_DIR}/cmake/gmshparsercpp-config.cmake"
+            "${CMAKE_CURRENT_BINARY_DIR}/gmshparsercpp-config-version.cmake"
+        DESTINATION
+            lib/cmake/gmshparsercpp
+    )
+endif()

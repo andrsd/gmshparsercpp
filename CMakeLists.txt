@@ -21,6 +21,8 @@ endif()
 set_property(CACHE GMSHPARSERCPP_LIBRARY_TYPE PROPERTY STRINGS ${LibraryTypeValues})
 
 option(GMSHPARSERCPP_BUILD_TESTS "Build tests" NO)
+option(GMSHPARSERCPP_INSTALL "Install the library" ON)
+mark_as_advanced(FORCE GMSHPARSERCPP_INSTALL)
 
 find_package(fmt 11 REQUIRED)
 
