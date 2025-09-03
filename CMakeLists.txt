@@ -21,29 +21,10 @@ endif()
 set_property(CACHE GMSHPARSERCPP_LIBRARY_TYPE PROPERTY STRINGS ${LibraryTypeValues})
 
 option(GMSHPARSERCPP_BUILD_TESTS "Build tests" NO)
+option(GMSHPARSERCPP_INSTALL "Install the library" ON)
+mark_as_advanced(FORCE GMSHPARSERCPP_INSTALL)
 
 find_package(fmt 11 REQUIRED)
-
-FetchContent_Declare(
-    googletest
-    GIT_REPOSITORY https://github.com/google/googletest.git
-    GIT_TAG        v1.15.2
-)
-set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
-mark_as_advanced(FORCE
-    BUILD_GMOCK
-    INSTALL_GTEST
-    FETCHCONTENT_SOURCE_DIR_GOOGLETEST
-    FETCHCONTENT_UPDATES_DISCONNECTED_GOOGLETEST
-)
-
-FetchContent_MakeAvailable(googletest)
-mark_as_advanced(FORCE
-    FETCHCONTENT_BASE_DIR
-    FETCHCONTENT_FULLY_DISCONNECTED
-    FETCHCONTENT_QUIET
-    FETCHCONTENT_UPDATES_DISCONNECTED
-)
 
 add_subdirectory(src)
 

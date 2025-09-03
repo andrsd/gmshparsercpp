@@ -6,6 +6,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(GMSHPARSERCPP_ASSETS_DIR ${PROJECT_SOURCE_DIR}/assets CACHE PATH "" FORCE)
 mark_as_advanced(FORCE GMSHPARSERCPP_ASSETS_DIR)
 
+find_package(GTest REQUIRED)
+
 add_executable(${PROJECT_NAME}
     main.cpp
     Edge1D_test.cpp
@@ -26,8 +28,7 @@ target_link_libraries(
     ${PROJECT_NAME}
     PUBLIC
         gmshparsercpp
-        gtest_main
-        gmock_main
+        GTest::gmock_main
 )
 
 configure_file(TestConfig.h.in TestConfig.h)
