@@ -113,7 +113,15 @@ if(GMSHPARSERCPP_CODE_COVERAGE)
         endif()
 
         find_program(LCOV_PATH lcov)
+        if (NOT LCOV_PATH)
+            message(FATAL_ERROR "lcov not found!")
+        endif()
+
         find_program(GENHTML_PATH genhtml)
+        if (NOT GENHTML_PATH)
+            message(FATAL_ERROR "lcov not found!")
+        endif()
+
         mark_as_advanced(FORCE
             GCOV_PATH
             LCOV_PATH
