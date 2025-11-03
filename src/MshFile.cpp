@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 #include "gmshparsercpp/MshFile.h"
-#include "fmt/printf.h"
 #include <system_error>
 
 namespace gmshparsercpp {

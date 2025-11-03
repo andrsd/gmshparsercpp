@@ -24,10 +24,10 @@ target_include_directories(${PROJECT_NAME}
         ${CMAKE_CURRENT_BINARY_DIR}
 )
 
-target_link_libraries(${PROJECT_NAME}
-    PUBLIC
-        fmt::fmt
-)
+if (GMSHPARSERCPP_WITH_FMT)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC GMSHPARSERCPP_WITH_FMT)
+    target_link_libraries(${PROJECT_NAME} PUBLIC fmt::fmt)
+endif()
 
 if (GMSHPARSERCPP_INSTALL)
     install(

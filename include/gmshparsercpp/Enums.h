@@ -3,8 +3,12 @@
 
 #pragma once
 
-#include <fmt/core.h>
-#include <fmt/format.h>
+#ifdef GMSHPARSERCPP_WITH_FMT
+    #include <fmt/core.h>
+    #include <fmt/format.h>
+#else
+    #include <format>
+#endif
 
 namespace gmshparsercpp {
 
@@ -49,6 +53,8 @@ enum ElementType {
 };
 
 } // namespace gmshparsercpp
+
+#ifdef GMSHPARSERCPP_WITH_FMT
 
 template <>
 struct fmt::formatter<gmshparsercpp::ElementType> : fmt::formatter<std::string> {
@@ -138,3 +144,95 @@ struct fmt::formatter<gmshparsercpp::ElementType> : fmt::formatter<std::string> 
         }
     }
 };
+
+#else
+
+template <>
+struct std::formatter<gmshparsercpp::ElementType> : std::formatter<std::string_view> {
+    auto
+    format(gmshparsercpp::ElementType e, auto & ctx) const
+    {
+        switch (e) {
+        case gmshparsercpp::ElementType::NONE:
+            return std::formatter<std::string_view>::format("NONE", ctx);
+
+        case gmshparsercpp::ElementType::POINT:
+            return std::formatter<std::string_view>::format("POINT", ctx);
+
+        case gmshparsercpp::ElementType::LINE2:
+            return std::formatter<std::string_view>::format("LINE2", ctx);
+        case gmshparsercpp::ElementType::LINE3:
+            return std::formatter<std::string_view>::format("LINE3", ctx);
+        case gmshparsercpp::ElementType::LINE5:
+            return std::formatter<std::string_view>::format("LINE5", ctx);
+        case gmshparsercpp::ElementType::LINE6:
+            return std::formatter<std::string_view>::format("LINE6", ctx);
+
+        case gmshparsercpp::ElementType::TRI3:
+            return std::formatter<std::string_view>::format("TRI3", ctx);
+        case gmshparsercpp::ElementType::TRI6:
+            return std::formatter<std::string_view>::format("TRI6", ctx);
+        case gmshparsercpp::ElementType::TRI10:
+            return std::formatter<std::string_view>::format("TRI10", ctx);
+        case gmshparsercpp::ElementType::TRI15:
+            return std::formatter<std::string_view>::format("TRI15", ctx);
+        case gmshparsercpp::ElementType::TRI21:
+            return std::formatter<std::string_view>::format("TRI21", ctx);
+
+        case gmshparsercpp::ElementType::ITRI9:
+            return std::formatter<std::string_view>::format("ITRI9", ctx);
+        case gmshparsercpp::ElementType::ITRI12:
+            return std::formatter<std::string_view>::format("ITRI12", ctx);
+        case gmshparsercpp::ElementType::ITRI15:
+            return std::formatter<std::string_view>::format("ITRI15", ctx);
+
+        case gmshparsercpp::ElementType::QUAD4:
+            return std::formatter<std::string_view>::format("QUAD4", ctx);
+        case gmshparsercpp::ElementType::QUAD8:
+            return std::formatter<std::string_view>::format("QUAD8", ctx);
+        case gmshparsercpp::ElementType::QUAD9:
+            return std::formatter<std::string_view>::format("QUAD9", ctx);
+
+        case gmshparsercpp::ElementType::TET4:
+            return std::formatter<std::string_view>::format("TET4", ctx);
+        case gmshparsercpp::ElementType::TET10:
+            return std::formatter<std::string_view>::format("TET10", ctx);
+        case gmshparsercpp::ElementType::TET20:
+            return std::formatter<std::string_view>::format("TET20", ctx);
+        case gmshparsercpp::ElementType::TET35:
+            return std::formatter<std::string_view>::format("TET35", ctx);
+        case gmshparsercpp::ElementType::TET56:
+            return std::formatter<std::string_view>::format("TET56", ctx);
+
+        case gmshparsercpp::ElementType::HEX8:
+            return std::formatter<std::string_view>::format("HEX8", ctx);
+        case gmshparsercpp::ElementType::HEX20:
+            return std::formatter<std::string_view>::format("HEX20", ctx);
+        case gmshparsercpp::ElementType::HEX27:
+            return std::formatter<std::string_view>::format("HEX27", ctx);
+        case gmshparsercpp::ElementType::HEX64:
+            return std::formatter<std::string_view>::format("HEX64", ctx);
+        case gmshparsercpp::ElementType::HEX125:
+            return std::formatter<std::string_view>::format("HEX125", ctx);
+
+        case gmshparsercpp::ElementType::PRISM6:
+            return std::formatter<std::string_view>::format("PRISM6", ctx);
+        case gmshparsercpp::ElementType::PRISM18:
+            return std::formatter<std::string_view>::format("PRISM18", ctx);
+        case gmshparsercpp::ElementType::PRISM15:
+            return std::formatter<std::string_view>::format("PRISM15", ctx);
+
+        case gmshparsercpp::ElementType::PYRAMID5:
+            return std::formatter<std::string_view>::format("PYRAMID5", ctx);
+        case gmshparsercpp::ElementType::PYRAMID13:
+            return std::formatter<std::string_view>::format("PYRAMID13", ctx);
+        case gmshparsercpp::ElementType::PYRAMID14:
+            return std::formatter<std::string_view>::format("PYRAMID14", ctx);
+
+        default:
+            return std::formatter<std::string_view>::format("Unknown", ctx);
+        }
+    }
+};
+
+#endif
