@@ -39,7 +39,6 @@ jobs:
             make \
             automake \
             gxx=14.* \
-            fmt=11.* \
             gtest \
             lcov
 
@@ -48,6 +47,7 @@ jobs:
           cmake -S . -B ${{ github.workspace }}/build \
             -DGCOV_PATH=`which x86_64-conda-linux-gnu-gcov` \
             -DGMSHPARSERCPP_BUILD_TESTS=YES \
+            -DGMSHPARSERCPP_WITH_FMT=NO \
             -DGMSHPARSERCPP_CODE_COVERAGE=YES
 
       - name: Build
