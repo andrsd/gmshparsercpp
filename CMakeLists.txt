@@ -9,9 +9,6 @@ project(gmshparsercpp
     LANGUAGES CXX
 )
 
-enable_language(C)
-
-include(FetchContent)
 include(${PROJECT_SOURCE_DIR}/cmake/CodeCoverage.cmake)
 
 set(LibraryTypeValues "SHARED;STATIC")
