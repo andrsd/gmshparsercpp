@@ -1,0 +1,9 @@
+set(GMSHPARSERCPP_WITH_FMT @GMSHPARSERCPP_WITH_FMT@)
+
+include(CMakeFindDependencyMacro)
+
+if (GMSHPARSERCPP_WITH_FMT)
+    find_dependency(fmt 11 REQUIRED)
+endif()
+
+include("${CMAKE_CURRENT_LIST_DIR}/gmshparsercpp-targets.cmake")
