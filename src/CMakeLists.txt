@@ -37,6 +37,8 @@ if (GMSHPARSERCPP_WITH_FMT)
 endif()
 
 if (GMSHPARSERCPP_INSTALL)
+    include(CMakePackageConfigHelpers)
+
     install(
         TARGETS gmshparsercpp
         EXPORT gmshparsercpp-targets
@@ -53,10 +55,15 @@ if (GMSHPARSERCPP_INSTALL)
         FILES_MATCHING PATTERN "*.h"
     )
 
-    include(CMakePackageConfigHelpers)
+    configure_package_config_file(
+        ${PROJECT_SOURCE_DIR}/cmake/gmshparsercpp-config.cmake.in gmshparsercpp-config.cmake
+        INSTALL_DESTINATION lib/cmake/gmshparsercpp
+        NO_SET_AND_CHECK_MACRO
+    )
+
     write_basic_package_version_file(gmshparsercpp-config-version.cmake
         VERSION ${PROJECT_VERSION}
-        COMPATIBILITY AnyNewerVersion
+        COMPATIBILITY SameMajorVersion
     )
 
     install(
@@ -68,7 +75,7 @@ if (GMSHPARSERCPP_INSTALL)
 
     install(
         FILES
-            "${PROJECT_SOURCE_DIR}/cmake/gmshparsercpp-config.cmake"
+            "${CMAKE_CURRENT_BINARY_DIR}/gmshparsercpp-config.cmake"
             "${CMAKE_CURRENT_BINARY_DIR}/gmshparsercpp-config-version.cmake"
         DESTINATION
             lib/cmake/gmshparsercpp
