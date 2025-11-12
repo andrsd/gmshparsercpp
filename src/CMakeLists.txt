@@ -5,6 +5,13 @@ add_library(${PROJECT_NAME}
         MshLexer.cpp
 )
 
+if (GMSHPARSERCPP_WITH_FMT)
+    target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
+    find_package(fmt 11 REQUIRED)
+else()
+    target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
+endif()
+
 if(CMAKE_PROJECT_NAME STREQUAL "gmshparsercpp")
     target_code_coverage(${PROJECT_NAME})
 endif()

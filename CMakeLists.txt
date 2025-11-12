@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
 
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 project(gmshparsercpp
@@ -20,14 +19,6 @@ option(GMSHPARSERCPP_BUILD_TESTS "Build tests" NO)
 option(GMSHPARSERCPP_INSTALL "Install the library" ON)
 option(GMSHPARSERCPP_WITH_FMT "Use fmt::fmt (use for pre C++ 20)" ON)
 mark_as_advanced(FORCE GMSHPARSERCPP_INSTALL)
-
-if (GMSHPARSERCPP_WITH_FMT)
-    set(GMSHPARSERCPP_CXX_STD 17)
-    find_package(fmt 11 REQUIRED)
-else()
-    set(GMSHPARSERCPP_CXX_STD 20)
-endif()
-set(CMAKE_CXX_STANDARD ${GMSHPARSERCPP_CXX_STD})
 
 add_subdirectory(src)
 
