@@ -44,10 +44,10 @@ TEST(Edge1DTest, single_block)
         }
     };
     // clang-format on
-    for (int i = 0; i < nodes.size(); i++) {
+    for (std::size_t i = 0; i < nodes.size(); i++) {
         EXPECT_EQ(nodes[i].dimension, dims[i]);
         ASSERT_EQ(nodes[i].coordinates.size(), pts[i].size());
-        for (int j = 0; j < nodes[i].coordinates.size(); j++) {
+        for (std::size_t j = 0; j < nodes[i].coordinates.size(); j++) {
             EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].x, pts[i][j].x);
             EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].y, pts[i][j].y);
             EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].z, pts[i][j].z);
@@ -79,7 +79,7 @@ TEST(Edge1DTest, single_block)
     // clang-format on
     auto pt_ents = f.get_point_entities();
     EXPECT_EQ(pt_ents.size(), 2);
-    for (auto i = 0; i < pt_ents.size(); i++) {
+    for (std::size_t i = 0; i < pt_ents.size(); i++) {
         EXPECT_EQ(pt_ents[i].tag, test_pt_ents[i].tag);
         EXPECT_DOUBLE_EQ(pt_ents[i].x, test_pt_ents[i].x);
         EXPECT_DOUBLE_EQ(pt_ents[i].y, test_pt_ents[i].y);
@@ -106,10 +106,10 @@ TEST(Edge1DTest, single_block)
     auto el_blks = f.get_element_blocks();
     EXPECT_EQ(el_blks.size(), 3);
 
-    for (int i = 0; i < el_blks.size(); i++) {
+    for (std::size_t i = 0; i < el_blks.size(); i++) {
         EXPECT_EQ(el_blks[i].elements.size(), conn[i].size());
-        for (int j = 0; j < el_blks[i].elements.size(); j++) {
-            for (int k = 0; k < el_blks[i].elements[j].node_tags.size(); k++)
+        for (std::size_t j = 0; j < el_blks[i].elements.size(); j++) {
+            for (std::size_t k = 0; k < el_blks[i].elements[j].node_tags.size(); k++)
                 EXPECT_EQ(el_blks[i].elements[j].node_tags[k], conn[i][j][k]);
         }
     }

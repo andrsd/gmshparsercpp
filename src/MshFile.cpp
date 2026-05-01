@@ -248,7 +248,7 @@ void
 MshFile::process_nodes_section_v2()
 {
     auto num_nodes = this->lexer.read().as<size_t>();
-    for (auto i = 0; i < num_nodes; i++) {
+    for (std::size_t i = 0; i < num_nodes; i++) {
         Node node;
         node.dimension = 0;
         node.entity_tag = this->lexer.get<int>();
@@ -267,11 +267,11 @@ void
 MshFile::process_nodes_section_v4()
 {
     auto num_entity_blocks = this->lexer.get<size_t>();
-    auto num_nodes = this->lexer.get<size_t>();
-    auto min_node_tag = this->lexer.get<size_t>();
-    auto max_node_tag = this->lexer.get<size_t>();
+    [[maybe_unused]] auto num_nodes = this->lexer.get<size_t>();
+    [[maybe_unused]] auto min_node_tag = this->lexer.get<size_t>();
+    [[maybe_unused]] auto max_node_tag = this->lexer.get<size_t>();
 
-    for (int i = 0; i < num_entity_blocks; i++) {
+    for (std::size_t i = 0; i < num_entity_blocks; i++) {
         Node node;
         node.dimension = this->lexer.get<int>();
         node.entity_tag = this->lexer.get<int>();
@@ -318,17 +318,17 @@ MshFile::process_elements_section_v2()
 {
     auto num_elements = this->lexer.read().as<size_t>();
     if (this->binary) {
-        for (auto i = 0; i < num_elements; i++) {
+        for (std::size_t i = 0; i < num_elements; i++) {
             auto el_type = static_cast<ElementType>(this->lexer.get<int>());
             auto dim = get_element_dimension(el_type);
             auto n_els = this->lexer.get<int>();
-            auto two = this->lexer.get<int>();
+            [[maybe_unused]] auto two = this->lexer.get<int>();
             for (auto k = 0; k < n_els; k++) {
                 Element el;
 
                 el.tag = this->lexer.get<int>();
                 auto phys = this->lexer.get<int>();
-                auto ent = this->lexer.get<int>();
+                [[maybe_unused]] auto ent = this->lexer.get<int>();
                 auto n_elem_nodes = get_nodes_per_element(el_type);
                 for (auto j = 0; j < n_elem_nodes; j++) {
                     auto nid = this->lexer.get<int>();
@@ -341,13 +341,13 @@ MshFile::process_elements_section_v2()
         }
     }
     else {
-        for (auto i = 0; i < num_elements; i++) {
+        for (std::size_t i = 0; i < num_elements; i++) {
             Element el;
             el.tag = this->lexer.get<int>();
             auto el_type = static_cast<ElementType>(this->lexer.get<int>());
-            auto two = this->lexer.get<int>();
+            [[maybe_unused]] auto two = this->lexer.get<int>();
             auto phys = this->lexer.get<int>();
-            auto ent = this->lexer.get<int>();
+            [[maybe_unused]] auto ent = this->lexer.get<int>();
             auto dim = get_element_dimension(el_type);
             auto n_elem_nodes = get_nodes_per_element(el_type);
             for (auto j = 0; j < n_elem_nodes; j++) {
@@ -366,11 +366,11 @@ void
 MshFile::process_elements_section_v4()
 {
     auto num_entity_blocks = this->lexer.get<size_t>();
-    auto num_elements = this->lexer.get<size_t>();
-    auto min_node_tag = this->lexer.get<size_t>();
-    auto max_node_tag = this->lexer.get<size_t>();
+    [[maybe_unused]] auto num_elements = this->lexer.get<size_t>();
+    [[maybe_unused]] auto min_node_tag = this->lexer.get<size_t>();
+    [[maybe_unused]] auto max_node_tag = this->lexer.get<size_t>();
 
-    for (int i = 0; i < num_entity_blocks; i++) {
+    for (std::size_t i = 0; i < num_entity_blocks; i++) {
         ElementBlock blk;
         blk.dimension = this->lexer.get<int>();
         blk.tag = this->lexer.get<int>();

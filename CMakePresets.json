@@ -94,7 +94,7 @@
         },
         {
             "name": "ci-release",
-            "displayName": "CI/Release Build",
+            "displayName": "Release build for CI",
             "configurePreset": "ci-release",
             "configuration": "Release"
         },
