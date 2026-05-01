@@ -120,10 +120,10 @@ TEST(Prism3DTest, v4_asc)
     }
 
     auto nodes = f.get_nodes();
-    for (int i = 0; i < nodes.size(); i++) {
+    for (std::size_t i = 0; i < nodes.size(); i++) {
         EXPECT_EQ(nodes[i].dimension, gold::v4::node_dim[i]);
         EXPECT_EQ(nodes[i].coordinates.size(), gold::v4::pts[i].size());
-        for (int j = 0; j < nodes[i].coordinates.size(); j++) {
+        for (std::size_t j = 0; j < nodes[i].coordinates.size(); j++) {
             EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].x, gold::v4::pts[i][j].x);
             EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].y, gold::v4::pts[i][j].y);
             EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].z, gold::v4::pts[i][j].z);
@@ -131,11 +131,11 @@ TEST(Prism3DTest, v4_asc)
     }
 
     auto el_blks = f.get_element_blocks();
-    for (int i = 0; i < el_blks.size(); i++) {
+    for (std::size_t i = 0; i < el_blks.size(); i++) {
         EXPECT_EQ(el_blks[i].elements.size(), gold::v4::block_elem_size[i]);
         EXPECT_EQ(el_blks[i].element_type, gold::v4::block_elem_type[i]);
-        for (int j = 0; j < el_blks[i].elements.size(); j++) {
-            for (int k = 0; k < el_blks[i].elements[j].node_tags.size(); k++)
+        for (std::size_t j = 0; j < el_blks[i].elements.size(); j++) {
+            for (std::size_t k = 0; k < el_blks[i].elements[j].node_tags.size(); k++)
                 EXPECT_EQ(el_blks[i].elements[j].node_tags[k], gold::v4::block_elem_conn[i][j][k]);
         }
     }
@@ -159,10 +159,10 @@ TEST(Prism3DTest, v4_bin)
     }
 
     auto nodes = f.get_nodes();
-    for (int i = 0; i < nodes.size(); i++) {
+    for (std::size_t i = 0; i < nodes.size(); i++) {
         EXPECT_EQ(nodes[i].dimension, gold::v4::node_dim[i]);
         EXPECT_EQ(nodes[i].coordinates.size(), gold::v4::pts[i].size());
-        for (int j = 0; j < nodes[i].coordinates.size(); j++) {
+        for (std::size_t j = 0; j < nodes[i].coordinates.size(); j++) {
             EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].x, gold::v4::pts[i][j].x);
             EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].y, gold::v4::pts[i][j].y);
             EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].z, gold::v4::pts[i][j].z);
@@ -170,11 +170,11 @@ TEST(Prism3DTest, v4_bin)
     }
 
     auto el_blks = f.get_element_blocks();
-    for (int i = 0; i < el_blks.size(); i++) {
+    for (std::size_t i = 0; i < el_blks.size(); i++) {
         EXPECT_EQ(el_blks[i].elements.size(), gold::v4::block_elem_size[i]);
         EXPECT_EQ(el_blks[i].element_type, gold::v4::block_elem_type[i]);
-        for (int j = 0; j < el_blks[i].elements.size(); j++) {
-            for (int k = 0; k < el_blks[i].elements[j].node_tags.size(); k++)
+        for (std::size_t j = 0; j < el_blks[i].elements.size(); j++) {
+            for (std::size_t k = 0; k < el_blks[i].elements[j].node_tags.size(); k++)
                 EXPECT_EQ(el_blks[i].elements[j].node_tags[k], gold::v4::block_elem_conn[i][j][k]);
         }
     }
@@ -198,9 +198,9 @@ TEST(Prism3DTest, v2_asc)
     }
 
     auto nodes = f.get_nodes();
-    for (int i = 0; i < nodes.size(); i++) {
+    for (std::size_t i = 0; i < nodes.size(); i++) {
         EXPECT_EQ(nodes[i].coordinates.size(), gold::v2::pts[i].size());
-        for (int j = 0; j < nodes[i].coordinates.size(); j++) {
+        for (std::size_t j = 0; j < nodes[i].coordinates.size(); j++) {
             EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].x, gold::v2::pts[i][j].x);
             EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].y, gold::v2::pts[i][j].y);
             EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].z, gold::v2::pts[i][j].z);
@@ -208,11 +208,11 @@ TEST(Prism3DTest, v2_asc)
     }
 
     auto el_blks = f.get_element_blocks();
-    for (int i = 0; i < el_blks.size(); i++) {
+    for (std::size_t i = 0; i < el_blks.size(); i++) {
         EXPECT_EQ(el_blks[i].elements.size(), gold::v2::block_elem_size[i]);
         EXPECT_EQ(el_blks[i].element_type, gold::v2::block_elem_type[i]);
-        for (int j = 0; j < el_blks[i].elements.size(); j++) {
-            for (int k = 0; k < el_blks[i].elements[j].node_tags.size(); k++)
+        for (std::size_t j = 0; j < el_blks[i].elements.size(); j++) {
+            for (std::size_t k = 0; k < el_blks[i].elements[j].node_tags.size(); k++)
                 EXPECT_EQ(el_blks[i].elements[j].node_tags[k], gold::v2::block_elem_conn[i][j][k]);
         }
     }
@@ -236,9 +236,9 @@ TEST(Prism3DTest, v2_bin)
     }
 
     auto nodes = f.get_nodes();
-    for (int i = 0; i < nodes.size(); i++) {
+    for (std::size_t i = 0; i < nodes.size(); i++) {
         EXPECT_EQ(nodes[i].coordinates.size(), gold::v2::pts[i].size());
-        for (int j = 0; j < nodes[i].coordinates.size(); j++) {
+        for (std::size_t j = 0; j < nodes[i].coordinates.size(); j++) {
             EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].x, gold::v2::pts[i][j].x);
             EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].y, gold::v2::pts[i][j].y);
             EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].z, gold::v2::pts[i][j].z);
@@ -246,11 +246,11 @@ TEST(Prism3DTest, v2_bin)
     }
 
     auto el_blks = f.get_element_blocks();
-    for (int i = 0; i < el_blks.size(); i++) {
+    for (std::size_t i = 0; i < el_blks.size(); i++) {
         EXPECT_EQ(el_blks[i].elements.size(), gold::v2::block_elem_size[i]);
         EXPECT_EQ(el_blks[i].element_type, gold::v2::block_elem_type[i]);
-        for (int j = 0; j < el_blks[i].elements.size(); j++) {
-            for (int k = 0; k < el_blks[i].elements[j].node_tags.size(); k++)
+        for (std::size_t j = 0; j < el_blks[i].elements.size(); j++) {
+            for (std::size_t k = 0; k < el_blks[i].elements[j].node_tags.size(); k++)
                 EXPECT_EQ(el_blks[i].elements[j].node_tags[k], gold::v2::block_elem_conn[i][j][k]);
         }
     }

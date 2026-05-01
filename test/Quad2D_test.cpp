@@ -40,10 +40,10 @@ TEST(Quad2DTest, v4_asc)
                                                      {},
 
                                                      { { 0.5, 0.5, 0. } } };
-    for (int i = 0; i < nodes.size(); i++) {
+    for (std::size_t i = 0; i < nodes.size(); i++) {
         EXPECT_EQ(nodes[i].dimension, dims[i]);
         ASSERT_EQ(nodes[i].coordinates.size(), pts[i].size());
-        for (int j = 0; j < nodes[i].coordinates.size(); j++) {
+        for (std::size_t j = 0; j < nodes[i].coordinates.size(); j++) {
             EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].x, pts[i][j].x);
             EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].y, pts[i][j].y);
             EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].z, pts[i][j].z);
@@ -57,10 +57,10 @@ TEST(Quad2DTest, v4_asc)
         { { 4 } },    { { 1, 2 } }, { { 2, 3 } },
         { { 3, 4 } }, { { 4, 1 } }, { { 2, 5, 1 }, { 1, 5, 4 }, { 3, 5, 2 }, { 4, 5, 3 } },
     };
-    for (int i = 0; i < el_blks.size(); i++) {
+    for (std::size_t i = 0; i < el_blks.size(); i++) {
         EXPECT_EQ(el_blks[i].elements.size(), conn[i].size());
-        for (int j = 0; j < el_blks[i].elements.size(); j++) {
-            for (int k = 0; k < el_blks[i].elements[j].node_tags.size(); k++)
+        for (std::size_t j = 0; j < el_blks[i].elements.size(); j++) {
+            for (std::size_t k = 0; k < el_blks[i].elements[j].node_tags.size(); k++)
                 EXPECT_EQ(el_blks[i].elements[j].node_tags[k], conn[i][j][k]);
         }
     }
@@ -97,10 +97,10 @@ TEST(Quad2DTest, v4_bin)
                                                      {},
                                                      {},
                                                      {} };
-    for (int i = 0; i < nodes.size(); i++) {
+    for (std::size_t i = 0; i < nodes.size(); i++) {
         EXPECT_EQ(nodes[i].dimension, dims[i]);
         EXPECT_EQ(nodes[i].coordinates.size(), pts[i].size());
-        for (int j = 0; j < nodes[i].coordinates.size(); j++) {
+        for (std::size_t j = 0; j < nodes[i].coordinates.size(); j++) {
             EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].x, pts[i][j].x);
             EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].y, pts[i][j].y);
             EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].z, pts[i][j].z);
@@ -115,10 +115,10 @@ TEST(Quad2DTest, v4_bin)
         { { 3, 4 } },
         { { 4, 1 } },
     };
-    for (int i = 0; i < el_blks.size(); i++) {
+    for (std::size_t i = 0; i < el_blks.size(); i++) {
         EXPECT_EQ(el_blks[i].elements.size(), conn[i].size());
-        for (int j = 0; j < el_blks[i].elements.size(); j++) {
-            for (int k = 0; k < el_blks[i].elements[j].node_tags.size(); k++)
+        for (std::size_t j = 0; j < el_blks[i].elements.size(); j++) {
+            for (std::size_t k = 0; k < el_blks[i].elements[j].node_tags.size(); k++)
                 EXPECT_EQ(el_blks[i].elements[j].node_tags[k], conn[i][j][k]);
         }
     }
@@ -143,9 +143,9 @@ TEST(Quad2DTest, v2_asc)
                                                      {},
                                                      {},
                                                      {} };
-    for (int i = 0; i < nodes.size(); i++) {
+    for (std::size_t i = 0; i < nodes.size(); i++) {
         EXPECT_EQ(nodes[i].coordinates.size(), pts[i].size());
-        for (int j = 0; j < nodes[i].coordinates.size(); j++) {
+        for (std::size_t j = 0; j < nodes[i].coordinates.size(); j++) {
             EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].x, pts[i][j].x);
             EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].y, pts[i][j].y);
             EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].z, pts[i][j].z);
@@ -160,10 +160,10 @@ TEST(Quad2DTest, v2_asc)
         { { 3, 4 } },
         { { 4, 1 } },
     };
-    for (int i = 0; i < el_blks.size(); i++) {
+    for (std::size_t i = 0; i < el_blks.size(); i++) {
         EXPECT_EQ(el_blks[i].elements.size(), conn[i].size());
-        for (int j = 0; j < el_blks[i].elements.size(); j++) {
-            for (int k = 0; k < el_blks[i].elements[j].node_tags.size(); k++)
+        for (std::size_t j = 0; j < el_blks[i].elements.size(); j++) {
+            for (std::size_t k = 0; k < el_blks[i].elements[j].node_tags.size(); k++)
                 EXPECT_EQ(el_blks[i].elements[j].node_tags[k], conn[i][j][k]);
         }
     }
@@ -188,9 +188,9 @@ TEST(Quad2DTest, v2_bin)
                                                      {},
                                                      {},
                                                      {} };
-    for (int i = 0; i < nodes.size(); i++) {
+    for (std::size_t i = 0; i < nodes.size(); i++) {
         EXPECT_EQ(nodes[i].coordinates.size(), pts[i].size());
-        for (int j = 0; j < nodes[i].coordinates.size(); j++) {
+        for (std::size_t j = 0; j < nodes[i].coordinates.size(); j++) {
             EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].x, pts[i][j].x);
             EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].y, pts[i][j].y);
             EXPECT_DOUBLE_EQ(nodes[i].coordinates[j].z, pts[i][j].z);
@@ -205,10 +205,10 @@ TEST(Quad2DTest, v2_bin)
         { { 3, 4 } },
         { { 4, 1 } },
     };
-    for (int i = 0; i < el_blks.size(); i++) {
+    for (std::size_t i = 0; i < el_blks.size(); i++) {
         EXPECT_EQ(el_blks[i].elements.size(), conn[i].size());
-        for (int j = 0; j < el_blks[i].elements.size(); j++) {
-            for (int k = 0; k < el_blks[i].elements[j].node_tags.size(); k++)
+        for (std::size_t j = 0; j < el_blks[i].elements.size(); j++) {
+            for (std::size_t k = 0; k < el_blks[i].elements[j].node_tags.size(); k++)
                 EXPECT_EQ(el_blks[i].elements[j].node_tags[k], conn[i][j][k]);
         }
     }

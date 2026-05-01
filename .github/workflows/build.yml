@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    name: ${{ matrix.os }}
+    name: ${{ matrix.os }}, ${{ matrix.preset }}
     defaults:
       run:
         shell: bash -el {0}
@@ -19,6 +19,9 @@ jobs:
       matrix:
         include:
           - os: ubuntu-22.04
+            preset: ci-release
+          - os: ubuntu-22.04
+            preset: ci-asan
     runs-on: ${{ matrix.os }}
     steps:
       - name: Set up miniconda
@@ -35,7 +38,7 @@ jobs:
       - name: Install dependencies
         run: |
           conda install \
-            cmake=3.* \
+            cmake \
             make \
             automake \
             cxx-compiler \
@@ -44,14 +47,12 @@ jobs:
 
       - name: Configure
         run: |
-          cmake -S . -B ${{ github.workspace }}/build \
-            -DGCOV_PATH=`which x86_64-conda-linux-gnu-gcov` \
-            -DGMSHPARSERCPP_BUILD_TESTS=YES \
-            -DGMSHPARSERCPP_WITH_FMT=NO \
-            -DGMSHPARSERCPP_CODE_COVERAGE=YES
+          cmake -B build --preset ${{ matrix.preset }} \
+            -DGCOV_PATH=`which x86_64-conda-linux-gnu-gcov`
 
       - name: Build
-        run: make -C ${{ github.workspace }}/build
+        run: |
+          cmake --build build --preset=${{ matrix.preset }} --parallel 4
 
       - name: Run tests
         run: |
