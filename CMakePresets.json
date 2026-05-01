@@ -1,0 +1,114 @@
+{
+    "version": 6,
+    "configurePresets": [
+        {
+            "name": "debug",
+            "displayName": "Debug",
+            "generator": "Unix Makefiles",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_CXX_FLAGS_DEBUG": "-g -Wall",
+                "CMAKE_C_FLAGS_DEBUG": "-g -Wall",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "GMSHPARSERCPP_LIBRARY_TYPE": "SHARED",
+                "GMSHPARSERCPP_BUILD_TESTS": "ON",
+                "GMSHPARSERCPP_CODE_COVERAGE": "ON"
+            }
+        },
+        {
+            "name": "release",
+            "displayName": "Release",
+            "generator": "Unix Makefiles",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_CXX_FLAGS_RELEASE": "-O3 -DNDEBUG",
+                "CMAKE_C_FLAGS_RELEASE": "-O3 -DNDEBUG",
+                "GMSHPARSERCPP_LIBRARY_TYPE": "SHARED",
+                "GMSHPARSERCPP_BUILD_TESTS": "OFF",
+                "GMSHPARSERCPP_CODE_COVERAGE": "OFF"
+            }
+        },
+        {
+            "name": "asan",
+            "displayName": "Sanitizer build",
+            "generator": "Unix Makefiles",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+                "CMAKE_CXX_FLAGS": "-Wall -fsanitize=address,undefined,nullability,float-divide-by-zero,integer-divide-by-zero,implicit-conversion -fno-sanitize-recover -fno-omit-frame-pointer",
+                "CMAKE_C_FLAGS": "-Wall -fsanitize=address,undefined,nullability,float-divide-by-zero,integer-divide-by-zero,implicit-conversion -fno-sanitize-recover -fno-omit-frame-pointer",
+                "CMAKE_EXE_LINKER_FLAGS": "-fsanitize=address,undefined,nullability,float-divide-by-zero,integer-divide-by-zero,implicit-conversion -fsanitize-address-use-after-scope -fno-sanitize-recover",
+                "GMSHPARSERCPP_LIBRARY_TYPE": "SHARED",
+                "GMSHPARSERCPP_CODE_COVERAGE": "NO",
+                "GMSHPARSERCPP_BUILD_TESTS": "YES",
+                "GMSHPARSERCPP_WITH_FMT": "NO"
+            }
+        },
+        {
+            "name": "ci-release",
+            "displayName": "CI/Release",
+            "generator": "Unix Makefiles",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_CXX_FLAGS_RELEASE": "-O3 -Wall -Werror -DNDEBUG",
+                "CMAKE_C_FLAGS_RELEASE": "-O3 -Wall -Werror -DNDEBUG",
+                "GMSHPARSERCPP_LIBRARY_TYPE": "SHARED",
+                "GMSHPARSERCPP_CODE_COVERAGE": "YES",
+                "GMSHPARSERCPP_BUILD_TESTS": "YES",
+                "GMSHPARSERCPP_WITH_FMT": "NO"
+            }
+        },
+        {
+            "name": "ci-asan",
+            "displayName": "Sanitizer build for CI",
+            "generator": "Unix Makefiles",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+                "CMAKE_CXX_FLAGS": "-Wall -fsanitize=address,undefined,float-divide-by-zero,integer-divide-by-zero -fno-sanitize-recover -fno-omit-frame-pointer",
+                "CMAKE_C_FLAGS": "-Wall -fsanitize=address,undefined,float-divide-by-zero,integer-divide-by-zero -fno-sanitize-recover -fno-omit-frame-pointer",
+                "CMAKE_EXE_LINKER_FLAGS": "-fsanitize=address,undefined,float-divide-by-zero,integer-divide-by-zero -fsanitize-address-use-after-scope -fno-sanitize-recover",
+                "GMSHPARSERCPP_LIBRARY_TYPE": "SHARED",
+                "GMSHPARSERCPP_CODE_COVERAGE": "YES",
+                "GMSHPARSERCPP_BUILD_TESTS": "YES",
+                "GMSHPARSERCPP_WITH_FMT": "NO"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "debug",
+            "displayName": "Debug Build",
+            "configurePreset": "debug",
+            "configuration": "Debug"
+        },
+        {
+            "name": "release",
+            "displayName": "Release Build",
+            "configurePreset": "release",
+            "configuration": "Release"
+        },
+        {
+            "name": "asan",
+            "displayName": "Sanitizer build",
+            "configurePreset": "asan",
+            "configuration": "RelWithDebInfo"
+        },
+        {
+            "name": "ci-release",
+            "displayName": "CI/Release Build",
+            "configurePreset": "ci-release",
+            "configuration": "Release"
+        },
+        {
+            "name": "ci-asan",
+            "displayName": "Sanitizer build fo CI",
+            "configurePreset": "ci-asan",
+            "configuration": "RelWithDebInfo"
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "debug",
+            "configurePreset": "debug"
+        }
+    ]
+}
